@@ -7,7 +7,7 @@
 # |   Advisor: Erivelton P. Guedes                                 | #
 # ------------------------------------------------------------------ #
 # ------------------------------------------------------------------ #
-# |   R package for API Ipeadata                                   | #
+# |   R package for Ipeadata API database                          | #
 # |   Version: 0.0.1                                               | #
 # |   January 14, 2019                                             | #
 # ------------------------------------------------------------------ #
@@ -16,17 +16,33 @@
 
 #' @title List with available series
 #'
-#' @description Returns the list with all available series from Ipeadata database
+#' @description Returns a list with available series from Ipeadata API database.
 #'
-#' @usage available_series()
+#' @usage available_series(language = c("en", "br"))
+#'
+#' @param language string specifying the selected language. Language options are
+#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#'
+#' @return A data frame containing Ipeadata code, name (in Brazilian portuguese), source,
+#' periodicity, last update and activity status of available series.
 #'
 #' @examples
-#' # Available series
+#' # Available series (in English)
 #' all_series <- available_series()
 #'
+#' # Available series (in Brazilian portuguese)
+#' all_seriesBR <- available_series(language = "br")
+#'
+#' @note The names of available series maintain in the original language (Brazilian portuguese).
+#'
 #' @export
+#'
+#' @importFrom magrittr %<>%
 
-available_series <- function() {
+available_series <- function(language = c("en", "br")) {
+
+  # Check language arg
+  language <- match.arg(language)
 
   # URL for metadata
   url <- 'http://www.ipeadata.gov.br/api/odata4/Metadados/'
@@ -39,10 +55,6 @@ available_series <- function() {
   ##           Remove accents >
   ##           Transform in factor >
   ##           Transform in date >
-  ##           Label status >
-  ##           Label periodicity >
-  ##           Rename variables >
-  ##           Add subtitles
   series <-
     jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
     dplyr::as_tibble() %>%
@@ -51,78 +63,110 @@ available_series <- function() {
     dplyr::filter(!is.na(PERNOME) & !is.na(SERSTATUS)) %>%
     dplyr::mutate(PERNOME = iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
     dplyr::mutate(FNTSIGLA = as.factor(FNTSIGLA)) %>%
-    dplyr::mutate(SERATUALIZACAO = lubridate::as_date(SERATUALIZACAO)) %>%
-    dplyr::mutate(SERSTATUS = factor(SERSTATUS,
-                                     levels = c('A', 'I'),
-                                     labels = c('Active', 'Inactive'))) %>%
-    dplyr::mutate(PERNOME = factor(PERNOME,
-                                     levels = c('Anual', 'Decenal', 'Diaria',
-                                                'Mensal', 'Quadrienal', 'Quinquenal',
-                                                'Semestral', 'Trimestral', 'Nao se aplica'),
-                                     labels = c('Yearly', 'Decennial', 'Daily',
-                                                'Monthly', 'Quadrennial', 'Quinquennial',
-                                                'Semiannual', 'Quarterly', 'Not applicable'))) %>%
-    purrr::set_names(c('code', 'name', 'source',
-                       'periodicity', 'lastupdate', 'status')) %>%
-    sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)','Source',
-                                    'Periodicity','Last Update','Status'))
+    dplyr::mutate(SERATUALIZACAO = lubridate::as_date(SERATUALIZACAO))
+
+    # Setting labels in selected language
+    if (language == 'en') {
+
+      series %<>%
+        dplyr::mutate(SERSTATUS = factor(SERSTATUS,
+                                         levels = c('A', 'I'),
+                                         labels =  c('Active', 'Inactive'))) %>%
+        dplyr::mutate(PERNOME = factor(PERNOME,
+                                       levels = c('Anual', 'Decenal', 'Diaria',
+                                                  'Mensal', 'Quadrienal', 'Quinquenal',
+                                                  'Semestral', 'Trimestral', 'Nao se aplica'),
+                                       labels = c('Yearly', 'Decennial', 'Daily',
+                                                  'Monthly', 'Quadrennial', 'Quinquennial',
+                                                  'Semiannual', 'Quarterly', 'Not applicable'))) %>%
+        purrr::set_names(c('code', 'name', 'source',
+                           'periodicity', 'lastupdate', 'status')) %>%
+        sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)','Source',
+                                'Periodicity','Last Update','Status'))
+
+    } else {
+
+      series %<>%
+        dplyr::mutate(SERSTATUS = factor(SERSTATUS,
+                                         levels = c('A', 'I'),
+                                         labels =  c('Ativa', 'Inativa'))) %>%
+        dplyr::mutate(PERNOME = factor(PERNOME)) %>%
+        purrr::set_names(c('codigo', 'nome', 'fonte',
+                           'periodicidade', 'ultimaatualizacao', 'status')) %>%
+        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie','Fonte',
+                                'Periodicidade','Ultima Atualizacao','Status'))
+
+    }
 
   series
 }
 
-# # Available themes ------------------------------------------------
-# available_themes <- function() {
-#
-#   # URL for themes
-#   url <- 'http://www.ipeadata.gov.br/api/odata4/Temas/'
-#
-#   ## Starting: Extract from JSON >
-#   ##           Transform to tbl >
-#   ##           Select variables >
-#   ##           Sort by code >
-#   ##           Transform in chr >
-#   ##           Rename variables >
-#   ##           Add subtitles
-#
-#   themes <-
-#     data.frame(jsonlite::fromJSON(url, flatten = TRUE)[[2]]) %>%
-#     dplyr::as_tibble() %>%
-#     dplyr::select(TEMCODIGO, TEMNOME) %>%
-#     dplyr::arrange(TEMCODIGO) %>%
-#     dplyr::mutate(TEMNOME = as.character(TEMNOME)) %>%
-#     purrr::set_names(c('tcode', 'theme')) %>%
-#     sjlabelled::set_label(c('Theme Code','Theme (PT-BR)'))
-#
-#   themes
-# }
-#
-# # Example:
-# all_themes <- available_themes()
-#
-# # Available countries ------------------------------------------------
-# available_countries <- function() {
-#   # URL for countries
-#   url <- 'http://www.ipeadata.gov.br/api/odata4/Paises/'
-#
-#   ## Starting: Extract from JSON >
-#   ##           Transform to tbl >
-#   ##           Sort by code >
-#   ##           Rename variables >
-#   ##           Add subtitles
-#
-#   countries <-
-#     jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
-#     dplyr::as_tibble() %>%
-#     dplyr::arrange(PAICODIGO) %>%
-#     purrr::set_names(c('ccode', 'cname')) %>%
-#     sjlabelled::set_label(c('Country Code (ISO 3)','Country Name (PT-BR)'))
-#
-#   countries
-# }
-#
-# # Example:
-# all_countries <- available_countries()
-#
+#' # Available themes ------------------------------------------------
+#'
+#' #' @title List with available themes
+#' #'
+#' #' @description Returns a list with all available series from Ipeadata API database. XXXXXXXXXXXXX
+#' #'
+#' #' @usage available_themes()
+#' #'
+#' #' @return A data frame containing Ipeadata code, name (in brazilian portuguese), source,
+#' #' periodicity, last update date and activity status of available series. XXXXXXXXXXXX
+#' #'
+#' #' @examples
+#' #' # Available themes
+#' #' all_themes <- available_themes()
+#' #'
+#' #' @export
+#'
+#' available_themes <- function() {
+#'
+#'   # URL for themes
+#'   url <- 'http://www.ipeadata.gov.br/api/odata4/Temas/'
+#'
+#'   ## Starting: Extract from JSON >
+#'   ##           Transform to tbl >
+#'   ##           Select variables >
+#'   ##           Sort by code >
+#'   ##           Transform in chr >
+#'   ##           Rename variables >
+#'   ##           Add subtitles
+#'
+#'   themes <-
+#'     data.frame(jsonlite::fromJSON(url, flatten = TRUE)[[2]]) %>%
+#'     dplyr::as_tibble() %>%
+#'     dplyr::select(TEMCODIGO, TEMNOME) %>%
+#'     dplyr::arrange(TEMCODIGO) %>%
+#'     dplyr::mutate(TEMNOME = as.character(TEMNOME)) %>%
+#'     purrr::set_names(c('tcode', 'theme')) %>%
+#'     sjlabelled::set_label(c('Theme Code','Theme (PT-BR)'))
+#'
+#'   themes
+#' }
+#'
+#' # Available countries ------------------------------------------------
+#' available_countries <- function() {
+#'   # URL for countries
+#'   url <- 'http://www.ipeadata.gov.br/api/odata4/Paises/'
+#'
+#'   ## Starting: Extract from JSON >
+#'   ##           Transform to tbl >
+#'   ##           Sort by code >
+#'   ##           Rename variables >
+#'   ##           Add subtitles
+#'
+#'   countries <-
+#'     jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
+#'     dplyr::as_tibble() %>%
+#'     dplyr::arrange(PAICODIGO) %>%
+#'     purrr::set_names(c('ccode', 'cname')) %>%
+#'     sjlabelled::set_label(c('Country Code (ISO 3)','Country Name (PT-BR)'))
+#'
+#'   countries
+#' }
+#'
+#' # Example:
+#' all_countries <- available_countries()
+
 # # Available territories ------------------------------------------------
 # available_territories <- function() {
 #
