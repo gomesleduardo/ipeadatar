@@ -4,13 +4,27 @@
 \alias{available_series}
 \title{List with available series}
 \usage{
-available_series()
+available_series(language = c("en", "br"))
+}
+\arguments{
+\item{language}{string specifying the selected language. Language options are
+English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
+}
+\value{
+A data frame containing Ipeadata code, name (in Brazilian portuguese), source,
+periodicity, last update and activity status of available series.
 }
 \description{
-Returns the list with all available series from Ipeadata database
+Returns a list with available series from Ipeadata API database.
+}
+\note{
+The names of available series maintain in the original language (Brazilian portuguese).
 }
 \examples{
-# Available series
+# Available series (in English)
 all_series <- available_series()
+
+# Available series (in Brazilian portuguese)
+all_seriesBR <- available_series(language = "br")
 
 }
