@@ -2,4 +2,5 @@
 
 export("%>%")
 export(available_series)
+importFrom(magrittr,"%<>%")
 importFrom(magrittr,"%>%")
