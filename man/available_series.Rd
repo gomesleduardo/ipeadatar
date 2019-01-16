@@ -18,7 +18,7 @@ periodicity, last update and activity status of available series.
 Returns a list with available series from Ipeadata API database.
 }
 \note{
-The names of available series maintain in the original language (Brazilian portuguese).
+The names of available series were kept in the original language (Brazilian portuguese).
 }
 \examples{
 # Available series (in English)
