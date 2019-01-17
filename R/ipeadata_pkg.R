@@ -61,15 +61,17 @@ available_series <- function(language = c("en", "br")) {
     dplyr::arrange(FNTSIGLA, PERNOME, SERCODIGO) %>%
     dplyr::filter(!is.na(PERNOME) & !is.na(SERSTATUS)) %>%
     dplyr::mutate(FNTSIGLA = as.factor(FNTSIGLA)) %>%
-    dplyr::mutate(SERATUALIZACAO = lubridate::as_date(SERATUALIZACAO))
+    dplyr::mutate(SERATUALIZACAO = lubridate::as_date(SERATUALIZACAO)) %>%
+    dplyr::mutate(SERSTATUS = as.character(SERSTATUS)) %>%
+    dplyr::mutate(SERSTATUS = dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
 
     # Setting labels in selected language
     if (language == 'en') {
 
       series %<>%
         dplyr::mutate(SERSTATUS = factor(SERSTATUS,
-                                         levels = c('A', 'I'),
-                                         labels =  c('Active', 'Inactive'))) %>%
+                                         levels = c('A', 'I', ''),
+                                         labels =  c('Active', 'Inactive', ''))) %>%
         dplyr::mutate(PERNOME = iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
         dplyr::mutate(PERNOME = factor(PERNOME,
                                        levels = c('Anual', 'Decenal', 'Diaria',
@@ -87,8 +89,8 @@ available_series <- function(language = c("en", "br")) {
 
       series %<>%
         dplyr::mutate(SERSTATUS = factor(SERSTATUS,
-                                         levels = c('A', 'I'),
-                                         labels =  c('Ativa', 'Inativa'))) %>%
+                                         levels = c('A', 'I', ''),
+                                         labels =  c('Ativa', 'Inativa', ''))) %>%
         dplyr::mutate(PERNOME = factor(PERNOME)) %>%
         purrr::set_names(c('codigo', 'nome', 'fonte',
                            'freq', 'ultimaatualizacao', 'status')) %>%
@@ -398,6 +400,9 @@ available_territories <- function(language = c("en", "br")) {
 #' # metadado.serieD <- metadata(all_series$code[1:150])
 #' metadado.serieD <- metadata(all_series$code[1:150], 'br' ,TRUE)
 #'
+#' metadado.serieF <- metadata(c('TMP30DJF'), language = c("br"))
+#'
+#'
 #' @export
 #'
 #' @importFrom utils setTxtProgressBar txtProgressBar
@@ -458,11 +463,15 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   ## Starting: Transform in date >
   ##           Transform in factor >
   ##           Transform in factor >
+  ##           Transform in chr >
+  ##           Replace missing status >
 
   metadata %<>%
     dplyr::mutate(SERATUALIZACAO = lubridate::as_date(SERATUALIZACAO)) %>%
     dplyr::mutate(FNTSIGLA = as.factor(FNTSIGLA)) %>%
-    dplyr::mutate(FNTNOME = as.factor(FNTNOME))
+    dplyr::mutate(FNTNOME = as.factor(FNTNOME)) %>%
+    dplyr::mutate(SERSTATUS = as.character(SERSTATUS)) %>%
+    dplyr::mutate(SERSTATUS = dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
 
   # Setting labels in selected language
   if (language == 'en') {
@@ -495,7 +504,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                 "R$/Hrs", "Pence", "MW", "estabelecimento", "R$ de 1999", "Salario Minimo",
                                                 "(p.p.)", "Dias", "R$ de 1980",  "R$ de 1995", "Conto de reis de 1947",
                                                 "US$ de 1995", "Coroa norueguesa", "Coroa sueca", "Franco suico",
-                                                "Dolar australiano", "Dolar da nova zelândia", "Rand", "Peso boliviano",
+                                                "Dolar australiano", "Dolar da nova zelandia", "Rand", "Peso boliviano",
                                                 "Peso dominicano", "Sucre", "Sol novo", "Dolar das bahamas", "Franco CFA",
                                                 "Dolar de trindad e tobago", "Rial iraniano", "Dinar iraquiano", "Shekel novo",
                                                 "Rial saudita", "Libra egipcia", "Rial iemenita", "Dolar de hong kong", "Rupia indiana",
@@ -503,7 +512,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                 "Kuanza reajustavel", "Dirra marroquino", "Naira", "Rublo", "Tolar", "Leu romeno",
                                                 "Libra esterlina de 1913", "(Sigla)", "Kg", "Pessoas", "Horas", "US$ FOB", "Libra irlandesa",
                                                 "Escudo", "zloty", "US$ de 2005", "MWh", "Tep", "Razao/relacao", "Quantidade", "Real",
-                                                "SM", "°C", "mm/mes"),
+                                                "SM", "?C", "mm/mes"),
                                      labels = c("-", "Ton", "R$", "GWh", "US$", "Euro", "Unit", "Cubic meter", "Deutsche mark",
                                                 "French franc", "Italian lira", "Pound sterling", "Canadian dollar",
                                                 "Dutch guilder", "Belgian franc", "Argentine peso", "Chilean peso", "Spanish peseta",
@@ -539,7 +548,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                 "Russian ruble", "Slovenian tolar", "Romanian leu",
                                                 "Pound sterling, constant prices of 1913", "(acronyms)", "Kg", "People", "Hour",
                                                 "US$ FOB", "Irish pound", "Escudo", "Polish zloty", "US$, constant prices of 2005",
-                                                "MWh", "toe", "Ratio/relation", "Quantity", "Real", "Basic salary", "°C", "mm/month"))) %>%
+                                                "MWh", "toe", "Ratio/relation", "Quantity", "Real", "Basic salary", "Celsius Degree", "mm/month"))) %>%
       dplyr::mutate(PERNOME = iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
       dplyr::mutate(PERNOME = factor(PERNOME,
                                      levels = c('Anual', 'Decenal', 'Diaria',
@@ -557,8 +566,8 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                  'Thousands', 'Trillions', 'Hundreds',
                                                  'Hundred million'))) %>%
       dplyr::mutate(SERSTATUS = factor(SERSTATUS,
-                                       levels = c('A', 'I'),
-                                       labels = c('Active', 'Inactive'))) %>%
+                                       levels = c('A', 'I', ''),
+                                       labels = c('Active', 'Inactive', ''))) %>%
       purrr::set_names(c('code', 'name', 'comment', 'lastupdate', 'bname', 'source', 'sourcename',
                          'sourceurl', 'freq', 'unity', 'mf', 'status',
                          'scode', 'tcode')) %>%
@@ -575,8 +584,8 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
       dplyr::mutate(PERNOME = factor(PERNOME)) %>%
       dplyr::mutate(MULNOME = factor(MULNOME))
       dplyr::mutate(SERSTATUS = factor(SERSTATUS,
-                                       levels = c('A', 'I'),
-                                       labels = c('Ativa', 'Inativa'))) %>%
+                                       levels = c('A', 'I', ''),
+                                       labels = c('Ativa', 'Inativa', ''))) %>%
       purrr::set_names(c('codigo', 'nome', 'coment', 'ultimaatualizacao', 'bnome', 'fonte', 'fontenome',
                          'fonteurl', 'freq', 'unid', 'fm', 'status',
                          'scodigo', 'tcodigo')) %>%
