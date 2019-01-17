@@ -288,7 +288,7 @@ available_countries <- function(language = c("en", "br")) {
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing the territorial unit name, the territorial code, the territorial's name
-#' and the area in \eqn{km^{2}}.
+#' and the area in km^2.
 #'
 #' @examples
 #' # Available territories (in English)
