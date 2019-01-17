@@ -2,25 +2,28 @@
 % Please edit documentation in R/ipeadata_pkg.R
 \name{metadata}
 \alias{metadata}
-\title{MetadadosXXXX}
+\title{Returns a metadata about the chosen serie(s)}
 \usage{
 metadata(code, language = c("en", "br"), quiet = FALSE)
 }
 \arguments{
-\item{code}{jhiuahuhsu}
+\item{code}{vector of the serie codes. This serie codes may be required by \code{available_series()}.}
 
 \item{language}{string specifying the selected language. Language options are
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 
-\item{quiet}{dijfisjdijfsid}
+\item{quiet}{logical. If \code{quiet = FALSE} (default), a bar of progression is not shown.}
 }
 \value{
-A data frame containing the series code, the series' name, a comment about the series, last uptade, , ,
-the source, the source's name, the source's link, the frequency of the series, the unity, the multiplier factor,
-the topic cod and the country/territorial code.
+A data frame containing the serie codes, the series' names, a comment about the series, last uptades,
+the themes, the sources, the sources' names, the sources' url, the frequency of the series, the unity,
+the multiplier factor, the series' status, the subject code and the country/territorial code.
 }
 \description{
-dsgfaggfedgaedgfewetdewategdg
+dfsdfsfddsfdsfsfsfds.
+}
+\note{
+The original language of the available series' names and the comments were preserved.
 }
 \examples{
 metadado.serieA <- metadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
@@ -33,6 +36,5 @@ metadado.serieF <- metadata(c('abate_abpeav'), language = c("br"))
 metadado.serieD <- metadata(all_series$code[1:150], 'br' ,TRUE)
 
 metadado.serieF <- metadata(c('TMP30DJF'), language = c("br"))
-
 
 }
