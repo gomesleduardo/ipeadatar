@@ -14,7 +14,7 @@ English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 A data frame containing the country code and the countries' names in Brazilian portuguese.
 }
 \description{
-Returns a list with all countries. (????)
+Returns a lista with all countries that Ipea API database has information about. (????)
 }
 \examples{
 # Available countries (in English)
