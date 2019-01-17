@@ -32,4 +32,7 @@ metadado.serieF <- metadata(c('abate_abpeav'), language = c("br"))
 # metadado.serieD <- metadata(all_series$code[1:150])
 metadado.serieD <- metadata(all_series$code[1:150], 'br' ,TRUE)
 
+metadado.serieF <- metadata(c('TMP30DJF'), language = c("br"))
+
+
 }
