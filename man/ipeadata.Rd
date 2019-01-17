@@ -2,25 +2,24 @@
 % Please edit documentation in R/ipeadata_pkg.R
 \name{ipeadata}
 \alias{ipeadata}
-\title{BUSCA VALORES}
+\title{Returns a database about the chosen serie(s)}
 \usage{
 ipeadata(code, language = c("en", "br"), quiet = FALSE)
 }
 \arguments{
-\item{code}{jhiuahuhsu}
+\item{code}{vector of the serie codes. This serie codes may be required by \code{available_series()}.}
 
 \item{language}{string specifying the selected language. Language options are
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 
-\item{quiet}{dijfisjdijfsid}
+\item{quiet}{logical. If \code{quiet = FALSE} (default), a bar of progression is shown.}
 }
 \value{
-A data frame containing the series code, the series' name, a comment about the series, last uptade, , ,
-the source, the source's name, the source's link, the frequency of the series, the unity, the multiplier factor,
-the topic cod and the country/territorial code. dsfdsfdsfsrevcdxgdfgdrgdfdgdgfd
+A data frame containing the serie code, the date, the values, the territorial unit name
+and the territorial/country code.
 }
 \description{
-etfetrezetertatetdaertaertrrtaer
+dfsdfsdfsdfdsfsd
 }
 \examples{
 serieA <- ipeadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
@@ -32,6 +31,9 @@ serieG <- ipeadata(c('CONSUMOTOT'))
 serieH <- ipeadata(c('CONSUMOTOT'), language = c("br"))
 # serieC <- ipeadata(all_series$code)
 serieD <- ipeadata(all_series$code[1:150])
-serieD <- ipeadata(all_series$code[1:150], TRUE)
+serieD <- ipeadata(all_series$code[1:150], quiet = TRUE)
+
+}
+\references{
 
 }
