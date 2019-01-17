@@ -12,7 +12,7 @@ English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
 A data frame containing the territorial unit name, the territorial code, the territorial's name
-and the area in $km^2$.
+and the area in km^2.
 }
 \description{
 Returns a list containing information about territories' in Brazil.
