@@ -106,14 +106,14 @@ available_series <- function(language = c("en", "br")) {
 
 #' @title List with available subjects
 #'
-#' @description Returns a list with subjects discussed (????) by Ipeadata database.
+#' @description Returns a list with subjects discussed (????) by Ipeadata API database.
 #'
 #' @usage available_subjects(language = c("en", "br"))
 #'
 #' @param language string specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
-#' @return A data frame containing the subject code and the subjects in Brazilian portuguese. (???????)
+#' @return A data frame containing the subject codes and the subjects.
 #'
 #' @examples
 #' # Available subjects (in English)
@@ -191,7 +191,7 @@ available_subjects <- function(language = c("en", "br")) {
 
 #' @title List with countries' names
 #'
-#' @description Returns a list with all countries. (????)
+#' @description Returns a lista with all countries that Ipea API database has information about. (????)
 #'
 #' @usage available_countries(language = c("en", "br"))
 #'
@@ -288,7 +288,7 @@ available_countries <- function(language = c("en", "br")) {
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing the territorial unit name, the territorial code, the territorial's name
-#' and the area in $km^2$.
+#' and the area in \eqn{km^{2}}.
 #'
 #' @examples
 #' # Available territories (in English)
@@ -375,20 +375,20 @@ available_territories <- function(language = c("en", "br")) {
 
 # Metadata ------------------------------------------------
 
-#' @title MetadadosXXXX
+#' @title Returns a metadata about the chosen serie(s)
 #'
-#' @description dsgfaggfedgaedgfewetdewategdg
+#' @description dfsdfsfddsfdsfsfsfds. 
 #'
 #' @usage metadata(code, language = c("en", "br"), quiet = FALSE)
 #'
-#' @param code jhiuahuhsu
+#' @param code vector of the serie codes. This serie codes may be required by \code{available_series()}.
 #' @param language string specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
-#' @param quiet dijfisjdijfsid
+#' @param quiet logical. If \code{quiet = FALSE} (default), a bar of progression is not shown.
 #'
-#' @return A data frame containing the series code, the series' name, a comment about the series, last uptade, , ,
-#' the source, the source's name, the source's link, the frequency of the series, the unity, the multiplier factor,
-#' the topic cod and the country/territorial code.
+#' @return A data frame containing the serie codes, the series' names, a comment about the series, last uptades,
+#' the themes, the sources, the sources' names, the sources' url, the frequency of the series, the unity,
+#' the multiplier factor, the series' status, the subject code and the country/territorial code.
 #'
 #' @examples
 #' metadado.serieA <- metadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
@@ -401,8 +401,9 @@ available_territories <- function(language = c("en", "br")) {
 #' metadado.serieD <- metadata(all_series$code[1:150], 'br' ,TRUE)
 #'
 #' metadado.serieF <- metadata(c('TMP30DJF'), language = c("br"))
-#'
-#'
+#' 
+#' @note The original language of the available series' names and the comments were preserved.
+#' 
 #' @export
 #'
 #' @importFrom utils setTxtProgressBar txtProgressBar
@@ -572,7 +573,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                          'sourceurl', 'freq', 'unity', 'mf', 'status',
                          'scode', 'tcode')) %>%
       sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Comment (PT-BR)', 'Last Update',
-                              'Base name', 'Source', 'Source Name', 'Source URL',
+                              'Theme name', 'Source', 'Source Name', 'Source URL',
                               'Frequency', 'Unity', 'Multiplier Factor', 'Status',
                               'Subject Code', 'Country or Territorial Code'))
 
@@ -582,7 +583,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
       dplyr::mutate(BASNOME = factor(BASNOME)) %>%
       dplyr::mutate(UNINOME = factor(UNINOME)) %>%
       dplyr::mutate(PERNOME = factor(PERNOME)) %>%
-      dplyr::mutate(MULNOME = factor(MULNOME))
+      dplyr::mutate(MULNOME = factor(MULNOME)) %>% 
       dplyr::mutate(SERSTATUS = factor(SERSTATUS,
                                        levels = c('A', 'I', ''),
                                        labels = c('Ativa', 'Inativa', ''))) %>%
@@ -601,20 +602,19 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 
 # Values ------------------------------------------------
 
-#' @title BUSCA VALORES
+#' @title Returns a database about the chosen serie(s)
 #'
-#' @description etfetrezetertatetdaertaertrrtaer
+#' @description dfsdfsdfsdfdsfsd 
 #'
 #' @usage ipeadata(code, language = c("en", "br"), quiet = FALSE)
 #'
-#' @param code jhiuahuhsu
+#' @param code vector of the serie codes. This serie codes may be required by \code{available_series()}.
 #' @param language string specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
-#' @param quiet dijfisjdijfsid
+#' @param quiet logical. If \code{quiet = FALSE} (default), a bar of progression is shown.
 #'
-#' @return A data frame containing the series code, the series' name, a comment about the series, last uptade, , ,
-#' the source, the source's name, the source's link, the frequency of the series, the unity, the multiplier factor,
-#' the topic cod and the country/territorial code. dsfdsfdsfsrevcdxgdfgdrgdfdgdgfd
+#' @return A data frame containing the serie code, the date, the values, the territorial unit name
+#' and the territorial/country code.
 #'
 #' @examples
 #' serieA <- ipeadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
@@ -626,7 +626,9 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' serieH <- ipeadata(c('CONSUMOTOT'), language = c("br"))
 #' # serieC <- ipeadata(all_series$code)
 #' serieD <- ipeadata(all_series$code[1:150])
-#' serieD <- ipeadata(all_series$code[1:150], TRUE)
+#' serieD <- ipeadata(all_series$code[1:150], quiet = TRUE)
+#' 
+#' @references 
 #'
 #' @export
 #'
