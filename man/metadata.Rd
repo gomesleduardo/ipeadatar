@@ -33,7 +33,7 @@ The Ipeadata codes may be required by \code{available_series()}.
 meta <- metadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
 
 # Metadata about
-# "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
+# "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
 # in Brazilian portuguese
 metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
 

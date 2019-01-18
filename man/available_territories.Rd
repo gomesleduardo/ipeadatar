@@ -11,8 +11,8 @@ available_territories(language = c("en", "br"))
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
-A data frame containing unit name, code, name and area (in km$^2$)
- of Brazilian territorial divisions
+A data frame containing unit name, code, name and area (in km2)
+ of Brazilian territorial divisions.
 }
 \description{
 Returns a list with available Brazilian territorial

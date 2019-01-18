@@ -286,8 +286,8 @@ available_countries <- function(language = c("en", "br")) {
 #' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
-#' @return A data frame containing unit name, code, name and area (in km$^2$)
-#'  of Brazilian territorial divisions
+#' @return A data frame containing unit name, code, name and area (in km2)
+#'  of Brazilian territorial divisions.
 #'
 #' @examples
 #' # Available territories (in English)
@@ -395,7 +395,7 @@ available_territories <- function(language = c("en", "br")) {
 #' meta <- metadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
 #'
 #' # Metadata about
-#' # "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
+#' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
 #' # in Brazilian portuguese
 #' metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
 #'
@@ -635,15 +635,13 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' data <- ipeadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
 #'
 #' # Data from
-#' # "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
+#' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
 #' # in Brazilian portuguese
 #' dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
 #'
 #' # Regional data from
 #' # "CONSUMOTOT": Electric energy consumption, Brazil
 #' dataReg <- ipeadata(code = "CONSUMOTOT")
-#'
-#'
 #'
 #' @references This R package uses the Ipeadata API.
 #' For more information go to \url{http://www.ipeadata.gov.br/api/}.
