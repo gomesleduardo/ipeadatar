@@ -606,7 +606,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @title Returns a database about the chosen serie(s)
 #'
 #' @description Returns a database with values taken in a determined time (depending on the periodicity of the
-#' chosen serie(s)).
+#' chosen serie(s)). (???)
 #' 
 #' @usage ipeadata(code, language = c("en", "br"), quiet = FALSE)
 #'
