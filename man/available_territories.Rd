@@ -2,7 +2,7 @@
 % Please edit documentation in R/ipeadata_pkg.R
 \name{available_territories}
 \alias{available_territories}
-\title{List with territories' names}
+\title{List with available territorial divisions}
 \usage{
 available_territories(language = c("en", "br"))
 }
@@ -11,11 +11,12 @@ available_territories(language = c("en", "br"))
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
-A data frame containing the territorial unit name, the territorial code, the territorial's name
-and the area in km^2.
+A data frame containing unit name, code, name and area (in km$^2$)
+ of Brazilian territorial divisions
 }
 \description{
-Returns a list containing information about territories' in Brazil.
+Returns a list with available Brazilian territorial
+ divisions from Ipeadata API database.
 }
 \examples{
 # Available territories (in English)

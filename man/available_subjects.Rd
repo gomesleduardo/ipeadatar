@@ -11,11 +11,10 @@ available_subjects(language = c("en", "br"))
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
-A data frame containing the subject codes and the subjects.
+A data frame containing code and name of available subjects.
 }
 \description{
-Returns a list with subjects discussed (????) by Ipeadata API database. Returns a list with
-available subjects from Ipeadata API database. (????)
+Returns a list with available subjects from Ipeadata API database.
 }
 \examples{
 # Available subjects (in English)

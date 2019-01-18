@@ -2,7 +2,7 @@
 % Please edit documentation in R/ipeadata_pkg.R
 \name{available_countries}
 \alias{available_countries}
-\title{List with countries' names}
+\title{List with available countries}
 \usage{
 available_countries(language = c("en", "br"))
 }
@@ -11,10 +11,10 @@ available_countries(language = c("en", "br"))
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
-A data frame containing the country code and the countries' names in Brazilian portuguese.
+A data frame containing ISO 3 code and name of available countries.
 }
 \description{
-Returns a lista with all countries that Ipea API database has information about. (????)
+Returns a list with available countries from Ipeadata API database.
 }
 \examples{
 # Available countries (in English)

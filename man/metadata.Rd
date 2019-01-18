@@ -2,28 +2,29 @@
 % Please edit documentation in R/ipeadata_pkg.R
 \name{metadata}
 \alias{metadata}
-\title{Returns a metadata about the chosen serie(s)}
+\title{Returns a metadata about the requested series}
 \usage{
 metadata(code, language = c("en", "br"), quiet = FALSE)
 }
 \arguments{
-\item{code}{Vector of the serie codes. This serie codes may be required by \code{available_series()}.}
+\item{code}{Vector with Ipeadata code.}
 
 \item{language}{String specifying the selected language. Language options are
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 
-\item{quiet}{Logical. If \code{quiet = FALSE} (default), a bar of progression is shown.}
+\item{quiet}{Logical. If \code{FALSE} (default), a progress bar is shown.}
 }
 \value{
-A data frame containing the serie codes, the series' names, a comment about the series, last uptades,
-the themes, the sources, the sources' names, the sources' url, the frequency of the series, the unity,
-the multiplier factor, the series' status, the subject code and the country/territorial code.
+A data frame containing Ipeadata code, name, short comment, last update, theme name,
+ source's name and full name, source's URL, frequency, unity, multiplier factor, status,
+ subject code and the country or territorial code of required series.
 }
 \description{
-Returns a list with information about the chosen serie(s).
+Returns a list with metadata information about the requested series.
 }
 \note{
 The original language of the available series' names and the comments were preserved.
+The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
 metadado.serieA <- metadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
@@ -37,4 +38,12 @@ metadado.serieD <- metadata(all_series$code[1:150], 'br' ,TRUE)
 
 metadado.serieF <- metadata(c('TMP30DJF'), language = c("br"))
 
+}
+\references{
+This R package uses the Ipeadata API.
+For more information go to \url{http://www.ipeadata.gov.br/api/}.
+}
+\seealso{
+\code{\link{available_series}}, \code{\link{available_subjects}},
+\code{\link{available_territories}}
 }
