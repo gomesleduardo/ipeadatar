@@ -392,16 +392,15 @@ available_territories <- function(language = c("en", "br")) {
 #'  subject code and the country or territorial code of required series.
 #'
 #' @examples
-#' metadado.serieA <- metadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
-#'                               'ABCD', 'CONSUMOTOT', '13T_BANAGUA'))
-#' metadado.serieB <- metadata(c('valor366_fedfund366'))
-#' metadado.serieE <- metadata(c('abate_abpeav'))
-#' metadado.serieF <- metadata(c('abate_abpeav'), language = c("br"))
-#' # metadado.serieC <- metadata(all_series$code)
-#' # metadado.serieD <- metadata(all_series$code[1:150])
-#' metadado.serieD <- metadata(all_series$code[1:150], 'br' ,TRUE)
+#' # Metadata about
+#' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
+#' # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
+#' meta <- metadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
 #'
-#' metadado.serieF <- metadata(c('TMP30DJF'), language = c("br"))
+#' # Metadata about
+#' # "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
+#' # in Brazilian portuguese
+#' metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
 #'
 #' @note The original language of the available series' names and the comments were preserved.
 #' The Ipeadata codes may be required by \code{available_series()}.
@@ -425,12 +424,12 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   metadata <- dplyr::as_tibble(data.frame(NULL))
 
   # Progress Bar settings
-  if (!quiet & (length(code) >= 5)) {
+  if (!quiet & (length(code) >= 2)) {
     cat("Requesting Ipeadata API <http://www.ipeadata.gov.br/api/>")
     cat('\n')
     pb <- txtProgressBar(min = 0, max = length(code), style = 3)
   }
-  update.step <- max(5, floor(length(code)/100))
+  update.step <- max(2, floor(length(code)/100))
 
   # Retrieve metadata 1 by 1
   for (i in 1:length(code)) {
@@ -459,13 +458,13 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
     }
 
     # Progress Bar
-    if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 5)) {
+    if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
       setTxtProgressBar(pb, i)
     }
   }
 
   # Progress Bar closes
-  if (!quiet & (length(code) >= 5)) {
+  if (!quiet & (length(code) >= 2)) {
     close(pb)
   }
 
@@ -629,16 +628,15 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @seealso \code{\link{available_series}}, \code{\link{available_territories}}
 #'
 #' @examples
-#' serieA <- ipeadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
-#'                               'ABCD', 'CONSUMOTOT', '13T_BANAGUA'))
-#' serieB <- ipeadata(c('valor366_fedfund366'))
-#' serieE <- ipeadata(c('abate_abpeav'))
-#' serieF <- ipeadata(c('abate_abpeav'), language = c("br"))
-#' serieG <- ipeadata(c('CONSUMOTOT'))
-#' serieH <- ipeadata(c('CONSUMOTOT'), language = c("br"))
-#' # serieC <- ipeadata(all_series$code)
-#' serieD <- ipeadata(all_series$code[1:150])
-#' serieD <- ipeadata(all_series$code[1:150], quiet = TRUE)
+#' # Data from
+#' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
+#' # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
+#' data <- ipeadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
+#'
+#' # Data from
+#' # "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
+#' # in Brazilian portuguese
+#' dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
 #'
 #' @references This R package uses the Ipeadata API.
 #' For more information go to \url{http://www.ipeadata.gov.br/api/}.
@@ -656,12 +654,12 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   values <- dplyr::as_tibble(data.frame(NULL))
 
   # Progress Bar settings
-  if (!quiet & (length(code) >= 5)) {
+  if (!quiet & (length(code) >= 2)) {
     cat("Requesting Ipeadata API <http://www.ipeadata.gov.br/api/>")
     cat('\n')
     pb <- txtProgressBar(min = 0, max = length(code), style = 3)
   }
-  update.step <- max(5, floor(length(code)/100))
+  update.step <- max(2, floor(length(code)/100))
 
   # Retrieve metadata 1 by 1
   for (i in 1:length(code)){
@@ -691,13 +689,13 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
     }
 
     # Progress Bar
-    if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 5)) {
+    if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
       setTxtProgressBar(pb, i)
     }
   }
 
   # Progress Bar closes
-  if (!quiet & (length(code) >= 5)) {
+  if (!quiet & (length(code) >= 2)) {
     close(pb)
   }
 
