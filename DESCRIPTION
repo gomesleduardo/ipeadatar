@@ -3,7 +3,7 @@ Title: API Wrapper for Ipeadata
 Version: 0.1.0
 Authors@R: c(
     person("Luiz Eduardo S.","Gomes", role=c("aut","cre"), email="gomes.leduardo@gmail.com"),
-    person("Jessyka A. P.","Goltara", role=c("aut"), email="jessykagoltara@gmail.com")
+    person("Jessyka A. P.","Goltara", role=c("cre"), email="jessykagoltara@gmail.com")
     )
 Description: Allows directly access to the macroeconomic, 
              financial and regional database maintained by 
