@@ -51,29 +51,27 @@ available_series <- function(language = c("en", "br")) {
   ##           Transform to tbl >
   ##           Select variables >
   ##           Sort by source, freq and code >
-  ##           Remove NA >
   ##           Transform in factor >
   ##           Transform in date >
   series <-
     jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
     dplyr::as_tibble() %>%
-    dplyr::select(.dots = c('SERCODIGO', 'SERNOME', 'FNTSIGLA', 'PERNOME', 'SERATUALIZACAO', 'SERSTATUS')) %>%
-    dplyr::arrange(~ FNTSIGLA, ~ PERNOME, ~ SERCODIGO) %>%
-    dplyr::filter(~ !is.na(PERNOME) & ~ !is.na(SERSTATUS)) %>%
-    dplyr::mutate(FNTSIGLA = ~ as.factor(FNTSIGLA)) %>%
-    dplyr::mutate(SERATUALIZACAO = ~ lubridate::as_date(SERATUALIZACAO)) %>%
-    dplyr::mutate(SERSTATUS = ~ as.character(SERSTATUS)) %>%
-    dplyr::mutate(SERSTATUS = ~ dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
+    dplyr::select_(.dots = c('SERCODIGO', 'SERNOME', 'FNTSIGLA', 'PERNOME', 'SERATUALIZACAO', 'SERSTATUS')) %>%
+    dplyr::arrange_(.dots = c('FNTSIGLA', 'PERNOME', 'SERCODIGO')) %>%
+    dplyr::mutate_(FNTSIGLA = ~ as.factor(FNTSIGLA)) %>%
+    dplyr::mutate_(SERATUALIZACAO = ~ lubridate::as_date(SERATUALIZACAO)) %>%
+    dplyr::mutate_(SERSTATUS = ~ as.character(SERSTATUS)) %>%
+    dplyr::mutate_(SERSTATUS = ~ dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
 
     # Setting labels in selected language
     if (language == 'en') {
 
       series %<>%
-        dplyr::mutate(SERSTATUS = ~ factor(SERSTATUS,
+        dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
                                            levels = c('A', 'I', ''),
                                            labels =  c('Active', 'Inactive', ''))) %>%
-        dplyr::mutate(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-        dplyr::mutate(PERNOME = ~ factor(PERNOME,
+        dplyr::mutate_(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+        dplyr::mutate_(PERNOME = ~ factor(PERNOME,
                                          levels = c('Anual', 'Decenal', 'Diaria',
                                                     'Mensal', 'Quadrienal', 'Quinquenal',
                                                     'Semestral', 'Trimestral', 'Nao se aplica'),
@@ -88,10 +86,10 @@ available_series <- function(language = c("en", "br")) {
     } else {
 
       series %<>%
-        dplyr::mutate(SERSTATUS = ~ factor(SERSTATUS,
+        dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
                                            levels = c('A', 'I', ''),
                                            labels =  c('Ativa', 'Inativa', ''))) %>%
-        dplyr::mutate(PERNOME = ~ factor(PERNOME)) %>%
+        dplyr::mutate_(PERNOME = ~ factor(PERNOME)) %>%
         purrr::set_names(c('codigo', 'nome', 'fonte',
                            'freq', 'ultimaatualizacao', 'status')) %>%
         sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie','Fonte',
@@ -141,16 +139,16 @@ available_subjects <- function(language = c("en", "br")) {
   subjects <-
     data.frame(jsonlite::fromJSON(url, flatten = TRUE)[[2]]) %>%
     dplyr::as_tibble() %>%
-    dplyr::select(.dots = c('TEMCODIGO', 'TEMNOME')) %>%
-    dplyr::arrange(~ TEMCODIGO) %>%
-    dplyr::mutate(TEMNOME = ~ as.character(TEMNOME))
+    dplyr::select_(.dots = c('TEMCODIGO', 'TEMNOME')) %>%
+    dplyr::arrange_(.dots = c('TEMCODIGO')) %>%
+    dplyr::mutate_(TEMNOME = ~ as.character(TEMNOME))
 
   # Setting labels in selected language
   if (language == 'en') {
 
     subjects %<>%
-      dplyr::mutate(TEMNOME = ~ iconv(TEMNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(TEMNOME = ~ factor(TEMNOME,
+      dplyr::mutate_(TEMNOME = ~ iconv(TEMNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(TEMNOME = ~ factor(TEMNOME,
                                        levels = c('Producao', 'Consumo e vendas', 'Moeda e credito', 'Juros', 'Comercio exterior',
                                                   'Financas publicas', 'Cambio', 'Contas nacionais', 'Precos', 'Balanco de pagamentos',
                                                   'Economia internacional', 'Emprego', 'Salario e renda', 'Populacao', 'Indicadores sociais',
@@ -178,7 +176,7 @@ available_subjects <- function(language = c("en", "br")) {
   } else {
 
     subjects %<>%
-      dplyr::mutate(TEMNOME = ~ factor(TEMNOME)) %>%
+      dplyr::mutate_(TEMNOME = ~ factor(TEMNOME)) %>%
       purrr::set_names(c('scodigo', 'snome')) %>%
       sjlabelled::set_label(c('Codigo do Tema','Nome do Tema'))
 
@@ -224,14 +222,14 @@ available_countries <- function(language = c("en", "br")) {
   countries <-
     jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
     dplyr::as_tibble() %>%
-    dplyr::arrange(~ PAICODIGO)
+    dplyr::arrange_(.dots = c('PAICODIGO'))
 
   # Setting labels in selected language
   if (language == 'en') {
 
     countries %<>%
-      dplyr::mutate(PAINOME = ~ iconv(PAINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(PAINOME = ~ factor(PAINOME,
+      dplyr::mutate_(PAINOME = ~ iconv(PAINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(PAINOME = ~ factor(PAINOME,
                                        levels = c('Angola', 'Emirados Arabes Unidos', 'Argentina', 'Sudeste Asiatico', 'Australia',
                                                   'Austria', 'Belgica', 'Bahamas', 'Bolivia', 'Brasil', 'Canada', 'Suica', 'Chile',
                                                   'China', 'Congo', 'Colombia', 'Cabo Verde', 'Republica Tcheca', 'Alemanha',
@@ -261,7 +259,7 @@ available_countries <- function(language = c("en", "br")) {
                                                   'Slovenia', 'Sweden', 'Thailand', 'East Timor', 'Trinidad and Tobago', 'Taiwan',
                                                   'Developing countries', 'Uruguay','United States of America', 'Venezuela', 'World',
                                                   'Yemen', 'South Africa', 'Euro Area'))) %>%
-      dplyr::mutate(PAINOME = ~ as.character(PAINOME)) %>%
+      dplyr::mutate_(PAINOME = ~ as.character(PAINOME)) %>%
       purrr::set_names(c('tcode', 'tname')) %>%
       sjlabelled::set_label(c('Country Code (ISO 3)','Country Name'))
 
@@ -319,16 +317,16 @@ available_territories <- function(language = c("en", "br")) {
   territories <-
     jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
     dplyr::as_tibble() %>%
-    dplyr::select(.dots = c('NIVNOME', 'TERCODIGO', 'TERNOME', 'TERAREA')) %>%
-    dplyr::filter(~ !is.na(TERAREA)) %>%
-    dplyr::arrange(~ TERCODIGO)
+    dplyr::select_(.dots = c('NIVNOME', 'TERCODIGO', 'TERNOME', 'TERAREA')) %>%
+    dplyr::filter_(~ !is.na(TERAREA)) %>%
+    dplyr::arrange_(.dots = c('TERCODIGO'))
 
   # Setting labels in selected language
   if (language == 'en') {
 
     territories %<>%
-      dplyr::mutate(NIVNOME = ~ iconv(NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(NIVNOME = ~ factor(NIVNOME,
+      dplyr::mutate_(NIVNOME = ~ iconv(NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
                                        levels = c('Brasil', 'Regioes', 'Estados', 'Mesorregioes', 'Microrregioes',
                                                    'Estado/RM', 'Area metropolitana', 'Municipios',
                                                   'AMC 91-00', 'AMC 70-00', 'AMC 60-00', 'AMC 40-00',
@@ -337,7 +335,7 @@ available_territories <- function(language = c("en", "br")) {
                                                   'State/Metropolitan region', 'Metropolitan area', 'Municipality',
                                                   'MCA 91-00', 'MCA 70-00', 'MCA 60-00', 'MCA 40-00',
                                                   'MCA 20-00', 'MCA 1872-00'), ordered = TRUE)) %>%
-      dplyr::arrange(~ NIVNOME) %>%
+      dplyr::arrange_(.dots = c('NIVNOME')) %>%
       purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
       sjlabelled::set_label(c('Territorial Unit Name',
                               'Territorial Code','Territorial Name','Area (Km2)'))
@@ -345,7 +343,7 @@ available_territories <- function(language = c("en", "br")) {
   } else {
 
     territories %<>%
-      dplyr::mutate(NIVNOME = ~ factor(NIVNOME,
+      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
                                        levels = levels(factor(NIVNOME))[ c(
                                                                            which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == ''),
                                                                            which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Brasil'),
@@ -363,7 +361,7 @@ available_territories <- function(language = c("en", "br")) {
                                                                            which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 20-00'),
                                                                            which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 1872-00')
                                                                       )], ordered = TRUE)) %>%
-      dplyr::arrange(~ NIVNOME) %>%
+      dplyr::arrange_(.dots = c('NIVNOME')) %>%
       purrr::set_names(c('unome', 'tcodigo', 'tnome', 'area')) %>%
       sjlabelled::set_label(c('Nome da Unidade Territorial',
                               'Codigo Territorial','Nome do Territorio','Area (Km2)'))
@@ -388,7 +386,7 @@ available_territories <- function(language = c("en", "br")) {
 #'
 #' @return A data frame containing Ipeadata code, name, short comment, last update, theme name,
 #'  source's name and full name, source's URL, frequency, unity, multiplier factor, status,
-#'  subject code and the country or territorial code of required series.
+#'  subject code and the country or territorial code of requested series.
 #'
 #' @examples
 #' # Metadata about
@@ -400,6 +398,10 @@ available_territories <- function(language = c("en", "br")) {
 #' # "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
 #' # in Brazilian portuguese
 #' metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
+#'
+#' # Regional metadata about
+#' # "CONSUMOTOT": Electric energy consumption, Brazil
+#' dataReg <- ipeadata(code = "CONSUMOTOT")
 #'
 #' @note The original language of the available series' names and the comments were preserved.
 #' The Ipeadata codes may be required by \code{available_series()}.
@@ -448,7 +450,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
       ##           Select variables >
       metadata.aux %<>%
         dplyr::as_tibble() %>%
-        dplyr::select(.dots = c('-SERNUMERICA'))
+        dplyr::select_(.dots = c('-SERNUMERICA'))
 
       # Concatenate rows
       metadata <- rbind(metadata,metadata.aux)
@@ -474,22 +476,22 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   ##           Replace missing status >
 
   metadata %<>%
-    dplyr::mutate(SERATUALIZACAO = ~ lubridate::as_date(SERATUALIZACAO)) %>%
-    dplyr::mutate(FNTSIGLA = ~ as.factor(FNTSIGLA)) %>%
-    dplyr::mutate(FNTNOME = ~ as.factor(FNTNOME)) %>%
-    dplyr::mutate(SERSTATUS = ~ as.character(SERSTATUS)) %>%
-    dplyr::mutate(SERSTATUS = ~ dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
+    dplyr::mutate_(SERATUALIZACAO = ~ lubridate::as_date(SERATUALIZACAO)) %>%
+    dplyr::mutate_(FNTSIGLA = ~ as.factor(FNTSIGLA)) %>%
+    dplyr::mutate_(FNTNOME = ~ as.factor(FNTNOME)) %>%
+    dplyr::mutate_(SERSTATUS = ~ as.character(SERSTATUS)) %>%
+    dplyr::mutate_(SERSTATUS = ~ dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
 
   # Setting labels in selected language
   if (language == 'en') {
 
     metadata %<>%
-      dplyr::mutate(BASNOME = ~ iconv(BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(BASNOME = ~ factor(BASNOME,
+      dplyr::mutate_(BASNOME = ~ iconv(BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(BASNOME = ~ factor(BASNOME,
                                        levels = c('Macroeconomico', 'Regional', 'Social'),
                                        labels = c('Macroeconomic', 'Regional', 'Social'))) %>%
-      dplyr::mutate(UNINOME = ~ iconv(UNINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(UNINOME = ~ factor(UNINOME,
+      dplyr::mutate_(UNINOME = ~ iconv(UNINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(UNINOME = ~ factor(UNINOME,
                                        levels = c("-", "Tonelada", "R$", "GWh", "US$", "Euro", "Unidade", "Metro cubico",
                                                   "Marco alemao", "Franco frances", "Franco frances", "Libra esterlina",
                                                   "Dolar canadense", "Florim holandes", "Franco belga", "Peso argentino",
@@ -556,23 +558,23 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                   "Pound sterling, constant prices of 1913", "(acronyms)", "Kg", "People", "Hour",
                                                   "US$ FOB", "Irish pound", "Escudo", "Polish zloty", "US$, constant prices of 2005",
                                                   "MWh", "toe", "Ratio/relation", "Quantity", "Real", "Basic salary", "Celsius Degree", "mm/month"))) %>%
-      dplyr::mutate(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(PERNOME = ~ factor(PERNOME,
+      dplyr::mutate_(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(PERNOME = ~ factor(PERNOME,
                                        levels = c('Anual', 'Decenal', 'Diaria',
                                                   'Mensal', 'Quadrienal', 'Quinquenal',
                                                   'Semestral', 'Trimestral', 'Nao se aplica'),
                                        labels = c('Yearly', 'Decennial', 'Daily',
                                                   'Monthly', 'Quadrennial', 'Quinquennial',
                                                   'Semiannual', 'Quarterly', 'Not applicable'))) %>%
-      dplyr::mutate(MULNOME = ~ iconv(MULNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(MULNOME = ~ factor(MULNOME,
+      dplyr::mutate_(MULNOME = ~ iconv(MULNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(MULNOME = ~ factor(MULNOME,
                                        levels =   c('mil', 'milhoes', 'bilhoes', 'centavos',
                                                     'milhares', 'trilhoes', 'centenas',
                                                     'centena de milhao'),
                                        labels = c( 'Thousand', 'Millions', 'Billions', 'Cents',
                                                    'Thousands', 'Trillions', 'Hundreds',
                                                    'Hundred million'))) %>%
-      dplyr::mutate(SERSTATUS = ~ factor(SERSTATUS,
+      dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
                                          levels = c('A', 'I', ''),
                                          labels = c('Active', 'Inactive', ''))) %>%
       purrr::set_names(c('code', 'name', 'comment', 'lastupdate', 'bname', 'source', 'sourcename',
@@ -586,11 +588,11 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   } else {
 
     metadata %<>%
-      dplyr::mutate(BASNOME = ~ factor(BASNOME)) %>%
-      dplyr::mutate(UNINOME = ~ factor(UNINOME)) %>%
-      dplyr::mutate(PERNOME = ~ factor(PERNOME)) %>%
-      dplyr::mutate(MULNOME = ~ factor(MULNOME)) %>%
-      dplyr::mutate(SERSTATUS = ~ factor(SERSTATUS,
+      dplyr::mutate_(BASNOME = ~ factor(BASNOME)) %>%
+      dplyr::mutate_(UNINOME = ~ factor(UNINOME)) %>%
+      dplyr::mutate_(PERNOME = ~ factor(PERNOME)) %>%
+      dplyr::mutate_(MULNOME = ~ factor(MULNOME)) %>%
+      dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
                                          levels = c('A', 'I', ''),
                                          labels = c('Ativa', 'Inativa', ''))) %>%
       purrr::set_names(c('codigo', 'nome', 'coment', 'ultimaatualizacao', 'bnome', 'fonte', 'fontenome',
@@ -620,7 +622,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @param quiet Logical. If \code{FALSE} (default), a progress bar is shown.
 #'
 #' @return A data frame containing Ipeadata code, date, value, territorial unit name
-#' and country or territorial code of required series.
+#' and country or territorial code of requested series.
 #'
 #' @note The Ipeadata codes may be required by \code{available_series()}.
 #'
@@ -636,6 +638,12 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' # "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
 #' # in Brazilian portuguese
 #' dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
+#'
+#' # Regional data from
+#' # "CONSUMOTOT": Electric energy consumption, Brazil
+#' dataReg <- ipeadata(code = "CONSUMOTOT")
+#'
+#'
 #'
 #' @references This R package uses the Ipeadata API.
 #' For more information go to \url{http://www.ipeadata.gov.br/api/}.
@@ -676,10 +684,10 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 
       # Sorting by ccode and date
       values.aux %<>%
-        dplyr::mutate(TERCODIGO = ~ as.integer(TERCODIGO)) %>%
-        dplyr::mutate(NIVNOME = ~ as.factor(NIVNOME)) %>%
-        dplyr::mutate(VALDATA = ~ lubridate::as_date(VALDATA)) %>%
-        dplyr::arrange(~ TERCODIGO, ~ VALDATA)
+        dplyr::mutate_(TERCODIGO = ~ as.integer(TERCODIGO)) %>%
+        dplyr::mutate_(NIVNOME = ~ as.factor(NIVNOME)) %>%
+        dplyr::mutate_(VALDATA = ~ lubridate::as_date(VALDATA)) %>%
+        dplyr::arrange_(.dots = c('TERCODIGO', 'VALDATA'))
 
       # Concatenate rows
       values <- rbind(values, values.aux)
@@ -703,15 +711,15 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   ##           Add subtitles >
   ##           Remove duplicates
   values %<>%
-    dplyr::filter(~ !is.na(VALVALOR)) %>%
+    dplyr::filter_(~ !is.na(VALVALOR)) %>%
     dplyr::distinct()
 
   # Setting labels in selected language
   if (language == 'en') {
 
     values %<>%
-      dplyr::mutate(NIVNOME = ~ iconv(NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate(NIVNOME = ~ factor(NIVNOME,
+      dplyr::mutate_(NIVNOME = ~ iconv(NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
                                        levels = c('Brasil', 'Regioes', 'Estados', 'Mesorregioes', 'Microrregioes',
                                                   'Estado/RM', 'Area metropolitana', 'Municipios',
                                                   'AMC 91-00', 'AMC 70-00', 'AMC 60-00', 'AMC 40-00',
@@ -728,7 +736,7 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   } else {
 
     values %<>%
-      dplyr::mutate(NIVNOME = ~ factor(NIVNOME,
+      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
                                        levels = levels(factor(NIVNOME))[ c(
                                          which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == ''),
                                          which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Brasil'),

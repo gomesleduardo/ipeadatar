@@ -17,7 +17,7 @@ English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 \value{
 A data frame containing Ipeadata code, name, short comment, last update, theme name,
  source's name and full name, source's URL, frequency, unity, multiplier factor, status,
- subject code and the country or territorial code of required series.
+ subject code and the country or territorial code of requested series.
 }
 \description{
 Returns a list with metadata information about the requested series.
@@ -36,6 +36,10 @@ meta <- metadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
 # "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
 # in Brazilian portuguese
 metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
+
+# Regional metadata about
+# "CONSUMOTOT": Electric energy consumption, Brazil
+dataReg <- ipeadata(code = "CONSUMOTOT")
 
 }
 \references{
