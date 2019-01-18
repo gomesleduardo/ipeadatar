@@ -7,12 +7,12 @@
 metadata(code, language = c("en", "br"), quiet = FALSE)
 }
 \arguments{
-\item{code}{vector of the serie codes. This serie codes may be required by \code{available_series()}.}
+\item{code}{Vector of the serie codes. This serie codes may be required by \code{available_series()}.}
 
-\item{language}{string specifying the selected language. Language options are
+\item{language}{String specifying the selected language. Language options are
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 
-\item{quiet}{logical. If \code{quiet = FALSE} (default), a bar of progression is not shown.}
+\item{quiet}{Logical. If \code{quiet = FALSE} (default), a bar of progression is shown.}
 }
 \value{
 A data frame containing the serie codes, the series' names, a comment about the series, last uptades,
@@ -20,7 +20,7 @@ the themes, the sources, the sources' names, the sources' url, the frequency of 
 the multiplier factor, the series' status, the subject code and the country/territorial code.
 }
 \description{
-dfsdfsfddsfdsfsfsfds.
+Returns a list with information about the chosen serie(s).
 }
 \note{
 The original language of the available series' names and the comments were preserved.
