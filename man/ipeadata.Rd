@@ -25,16 +25,15 @@ Returns a list with available database about the requested series.
 The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
-serieA <- ipeadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
-                              'ABCD', 'CONSUMOTOT', '13T_BANAGUA'))
-serieB <- ipeadata(c('valor366_fedfund366'))
-serieE <- ipeadata(c('abate_abpeav'))
-serieF <- ipeadata(c('abate_abpeav'), language = c("br"))
-serieG <- ipeadata(c('CONSUMOTOT'))
-serieH <- ipeadata(c('CONSUMOTOT'), language = c("br"))
-# serieC <- ipeadata(all_series$code)
-serieD <- ipeadata(all_series$code[1:150])
-serieD <- ipeadata(all_series$code[1:150], quiet = TRUE)
+# Data from
+# "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
+# "SGS366_NASDAQ366": Nasdaq Composite Index - closed
+data <- ipeadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
+
+# Data from
+# "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
+# in Brazilian portuguese
+dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
 
 }
 \references{

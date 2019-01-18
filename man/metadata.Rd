@@ -27,16 +27,15 @@ The original language of the available series' names and the comments were prese
 The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
-metadado.serieA <- metadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
-                              'ABCD', 'CONSUMOTOT', '13T_BANAGUA'))
-metadado.serieB <- metadata(c('valor366_fedfund366'))
-metadado.serieE <- metadata(c('abate_abpeav'))
-metadado.serieF <- metadata(c('abate_abpeav'), language = c("br"))
-# metadado.serieC <- metadata(all_series$code)
-# metadado.serieD <- metadata(all_series$code[1:150])
-metadado.serieD <- metadata(all_series$code[1:150], 'br' ,TRUE)
+# Metadata about
+# "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
+# "SGS366_NASDAQ366": Nasdaq Composite Index - closed
+meta <- metadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
 
-metadado.serieF <- metadata(c('TMP30DJF'), language = c("br"))
+# Metadata about
+# "PRECOS12_IPCA12": Extended National Consumer Price Index - IPCA, Brazil
+# in Brazilian portuguese
+metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
 
 }
 \references{
