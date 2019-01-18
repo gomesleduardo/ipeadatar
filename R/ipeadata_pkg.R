@@ -20,7 +20,7 @@
 #'
 #' @usage available_series(language = c("en", "br"))
 #'
-#' @param language string specifying the selected language. Language options are
+#' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing Ipeadata code, name, source,
@@ -106,11 +106,12 @@ available_series <- function(language = c("en", "br")) {
 
 #' @title List with available subjects
 #'
-#' @description Returns a list with subjects discussed (????) by Ipeadata API database.
+#' @description Returns a list with subjects discussed (????) by Ipeadata API database. Returns a list with
+#' available subjects from Ipeadata API database. (????)
 #'
 #' @usage available_subjects(language = c("en", "br"))
 #'
-#' @param language string specifying the selected language. Language options are
+#' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing the subject codes and the subjects.
@@ -195,7 +196,7 @@ available_subjects <- function(language = c("en", "br")) {
 #'
 #' @usage available_countries(language = c("en", "br"))
 #'
-#' @param language string specifying the selected language. Language options are
+#' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing the country code and the countries' names in Brazilian portuguese.
@@ -284,7 +285,7 @@ available_countries <- function(language = c("en", "br")) {
 #'
 #' @usage available_territories(language = c("en", "br"))
 #'
-#' @param language string specifying the selected language. Language options are
+#' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing the territorial unit name, the territorial code, the territorial's name
@@ -377,14 +378,14 @@ available_territories <- function(language = c("en", "br")) {
 
 #' @title Returns a metadata about the chosen serie(s)
 #'
-#' @description dfsdfsfddsfdsfsfsfds. 
+#' @description Returns a list with information about the chosen serie(s). 
 #'
 #' @usage metadata(code, language = c("en", "br"), quiet = FALSE)
 #'
-#' @param code vector of the serie codes. This serie codes may be required by \code{available_series()}.
-#' @param language string specifying the selected language. Language options are
+#' @param code Vector of the serie codes. This serie codes may be required by \code{available_series()}.
+#' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
-#' @param quiet logical. If \code{quiet = FALSE} (default), a bar of progression is not shown.
+#' @param quiet Logical. If \code{quiet = FALSE} (default), a bar of progression is shown.
 #'
 #' @return A data frame containing the serie codes, the series' names, a comment about the series, last uptades,
 #' the themes, the sources, the sources' names, the sources' url, the frequency of the series, the unity,
@@ -604,14 +605,15 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 
 #' @title Returns a database about the chosen serie(s)
 #'
-#' @description dfsdfsdfsdfdsfsd 
-#'
+#' @description Returns a database with values taken in a determined time (depending on the periodicity of the
+#' chosen serie(s)).
+#' 
 #' @usage ipeadata(code, language = c("en", "br"), quiet = FALSE)
 #'
-#' @param code vector of the serie codes. This serie codes may be required by \code{available_series()}.
-#' @param language string specifying the selected language. Language options are
+#' @param code Vector of the serie codes. This serie codes may be required by \code{available_series()}.
+#' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
-#' @param quiet logical. If \code{quiet = FALSE} (default), a bar of progression is shown.
+#' @param quiet Logical. If \code{quiet = FALSE} (default), a bar of progression is shown.
 #'
 #' @return A data frame containing the serie code, the date, the values, the territorial unit name
 #' and the territorial/country code.
@@ -628,7 +630,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' serieD <- ipeadata(all_series$code[1:150])
 #' serieD <- ipeadata(all_series$code[1:150], quiet = TRUE)
 #' 
-#' @references 
+#' @references This R package uses the Ipeadata API. For more information go to \url{http://www.ipeadata.gov.br/api/}.
 #'
 #' @export
 #'
