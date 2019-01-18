@@ -7,19 +7,20 @@
 ipeadata(code, language = c("en", "br"), quiet = FALSE)
 }
 \arguments{
-\item{code}{vector of the serie codes. This serie codes may be required by \code{available_series()}.}
+\item{code}{Vector of the serie codes. This serie codes may be required by \code{available_series()}.}
 
-\item{language}{string specifying the selected language. Language options are
+\item{language}{String specifying the selected language. Language options are
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 
-\item{quiet}{logical. If \code{quiet = FALSE} (default), a bar of progression is shown.}
+\item{quiet}{Logical. If \code{quiet = FALSE} (default), a bar of progression is shown.}
 }
 \value{
 A data frame containing the serie code, the date, the values, the territorial unit name
 and the territorial/country code.
 }
 \description{
-dfsdfsdfsdfdsfsd
+Returns a database with values taken in a determined time (depending on the periodicity of the
+chosen serie(s)).
 }
 \examples{
 serieA <- ipeadata(c('abate_abpeav','AbInEe_VeLeTfC','VALOR366_FEDFUND366',
@@ -35,5 +36,5 @@ serieD <- ipeadata(all_series$code[1:150], quiet = TRUE)
 
 }
 \references{
-
+This R package uses the Ipeadata API. For more information go to \url{http://www.ipeadata.gov.br/api/}.
 }
