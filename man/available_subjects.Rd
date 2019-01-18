@@ -7,14 +7,15 @@
 available_subjects(language = c("en", "br"))
 }
 \arguments{
-\item{language}{string specifying the selected language. Language options are
+\item{language}{String specifying the selected language. Language options are
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
 A data frame containing the subject codes and the subjects.
 }
 \description{
-Returns a list with subjects discussed (????) by Ipeadata API database.
+Returns a list with subjects discussed (????) by Ipeadata API database. Returns a list with
+available subjects from Ipeadata API database. (????)
 }
 \examples{
 # Available subjects (in English)
