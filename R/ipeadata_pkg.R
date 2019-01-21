@@ -401,7 +401,7 @@ available_territories <- function(language = c("en", "br")) {
 #'
 #' # Regional metadata about
 #' # "CONSUMOTOT": Electric energy consumption, Brazil
-#' dataReg <- ipeadata(code = "CONSUMOTOT")
+#' metaReg <- metadata(code = "CONSUMOTOT")
 #'
 #' @note The original language of the available series' names and the comments were preserved.
 #' The Ipeadata codes may be required by \code{available_series()}.
