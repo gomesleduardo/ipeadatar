@@ -39,7 +39,7 @@ metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
 
 # Regional metadata about
 # "CONSUMOTOT": Electric energy consumption, Brazil
-dataReg <- ipeadata(code = "CONSUMOTOT")
+metaReg <- metadata(code = "CONSUMOTOT")
 
 }
 \references{
