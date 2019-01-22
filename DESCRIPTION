@@ -12,6 +12,8 @@ Description: Allows directly access to the macroeconomic,
              see <http://www.ipeadata.gov.br/api/>.
 License: GPL-3
 Encoding: UTF-8
+URL: http://github.com/gomesleduardo/ipeadata
+BugReports: http://github.com/gomesleduardo/ipeadata/issues
 LazyData: true
 RoxygenNote: 6.1.0
 Imports: 
