@@ -20,4 +20,3 @@ BugReports: http://github.com/gomesleduardo/ipeadatar/issues
 LazyData: true
 RoxygenNote: 6.1.0
 Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled, curl
-License: GPL-3
