@@ -1,4 +1,4 @@
-Package: ipeadata
+Package: ipeadatar
 Version: 0.1.0
 Date: 2019-01-22
 Title: API Wrapper for Ipeadata
@@ -16,8 +16,8 @@ Description: Allows directly access to the macroeconomic,
              see <http://www.ipeadata.gov.br/api/>.
 License: GPL-3
 Encoding: UTF-8
-URL: http://github.com/gomesleduardo/ipeadata
-BugReports: http://github.com/gomesleduardo/ipeadata/issues
+URL: http://github.com/gomesleduardo/ipeadatar
+BugReports: http://github.com/gomesleduardo/ipeadatar/issues
 LazyData: true
 RoxygenNote: 6.1.0
 Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled, curl
