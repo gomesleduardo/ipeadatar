@@ -1,9 +1,14 @@
 Package: ipeadata
-Title: API Wrapper for Ipeadata
 Version: 0.1.0
-Author: Luiz Eduardo S. Gomes <gomes.leduardo@gmail.com>
+Date: 2019-01-22
+Title: API Wrapper for Ipeadata
+Authors@R: c(
+    person("Luiz Eduardo S.","Gomes", role=c("aut","cre"), email="gomes.leduardo@gmail.com"),
+    person("Jessyka A. P.","Goltara", role=c("ctb"), email="jessykagoltara@gmail.com")
+    )
+Author: Luiz Eduardo S. Gomes [aut, cre],
+        Jessyka A. P. Goltara [ctb]
 Maintainer: Luiz Eduardo S. Gomes <gomes.leduardo@gmail.com>
-            Jessyka A. P. Goltara <jessykagoltara@gmail.com>
 Description: Allows directly access to the macroeconomic, 
              financial and regional database maintained by 
              Brazilian Institute for Applied Economic Research (Ipea).
@@ -15,10 +20,4 @@ URL: http://github.com/gomesleduardo/ipeadata
 BugReports: http://github.com/gomesleduardo/ipeadata/issues
 LazyData: true
 RoxygenNote: 6.1.0
-Imports: 
-    jsonlite,
-    dplyr,
-    lubridate,
-    purrr,
-    sjlabelled,
-    magrittr
+Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled
