@@ -1,6 +1,5 @@
 Package: ipeadatar
 Version: 0.1.0
-Date: 2019-01-22
 Title: API Wrapper for Ipeadata
 Authors@R: c(
     person("Luiz Eduardo S.","Gomes", role=c("aut","cre"), email="gomes.leduardo@gmail.com"),
