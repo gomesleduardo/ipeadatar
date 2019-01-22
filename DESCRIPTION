@@ -1,10 +1,9 @@
 Package: ipeadata
 Title: API Wrapper for Ipeadata
 Version: 0.1.0
-Authors@R: c(
-    person("Luiz Eduardo S.","Gomes", role=c("aut","cre"), email="gomes.leduardo@gmail.com"),
-    person("Jessyka A. P.","Goltara", role=c("ctb"), email="jessykagoltara@gmail.com")
-    )
+Author: Luiz Eduardo S. Gomes <luiz.gomes@ipea.gov.br>
+Maintainer: Luiz Eduardo S. Gomes <luiz.gomes@ipea.gov.br>
+            Jessyka A. P. Goltara <jessyka.goltara@ipea.gov.br>
 Description: Allows directly access to the macroeconomic, 
              financial and regional database maintained by 
              Brazilian Institute for Applied Economic Research (Ipea).
