@@ -20,4 +20,4 @@ URL: http://github.com/gomesleduardo/ipeadata
 BugReports: http://github.com/gomesleduardo/ipeadata/issues
 LazyData: true
 RoxygenNote: 6.1.0
-Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled
+Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled, curl
