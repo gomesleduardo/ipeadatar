@@ -4,4 +4,4 @@
 .Ruserdata
 .Rbuildignore
 ipeadatar.Rproj
-
+.travis.yml
