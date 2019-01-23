@@ -804,6 +804,7 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' \dontrun{
 #' # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
 #' ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
+#' 
 #' # Search by 'Portugal' in 'name'
 #' Portugal_series <- search_series(terms = c('Portugal'), fields = c('name'))
 #' 
@@ -818,61 +819,51 @@ search_series <- function(terms = NULL, fields = c('name'), language = c("en", "
   # Check language arg
   language <- match.arg(language)
   
+  # Getting all series
+  all_series <- available_series(language = language)
+  
+  # Searching
+  users_search <- dplyr::as_tibble(NULL)
+  
   if (!is.null(terms)) {
     
-    # Getting all series
-    all_series <- available_series(language = language)
-    
-    # Searching
-    users_search <- dplyr::as_tibble(NULL)
-    ii <- NULL
-    
-    # Define field
-    for (k in 1:length(fields)) {
+    for (i in 1:length(fields)) {
       
-      users_search_aux <- as.data.frame(subset(x = all_series, select = fields[k]))
-      
-      # Find term in current field
       for (j in 1:length(terms)) {
         
-        if (length(i <- grep(pattern = terms[j], x = users_search_aux[, 1], fixed = TRUE))) {
-          ii <- c(ii,i)
-          
-        }
+        users_search %<>% 
+          dplyr::bind_rows(users_search, 
+                           all_series %>% 
+                           dplyr::filter_(~ grepl(pattern = terms[j], x = get(fields[i])))) %>%
+          dplyr::distinct()
+        
       }
       
     }
     
-    users_search <- all_series[sort(unique(ii)), ]
-    
-    # Setting labels in selected language
-    if (language == 'en') {
-      
-      users_search %<>%
-        purrr::set_names(c('code', 'name', 'theme', 'source',
-                           'freq', 'lastupdate', 'status')) %>%
-        sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
-                                'Source', 'Frequency','Last Update','Status'))
-      
-    } else {
-      
-      users_search %<>%
-        purrr::set_names(c('codigo', 'nome', 'bnome', 'fonte',
-                           'freq', 'ultimaatualizacao', 'status')) %>%
-        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
-                                'Frequencia','Ultima Atualizacao','Status'))
-      
-    }
-    
-    users_search
-    
   } else {
     
-    users_search <- available_series(language = language)
-    users_search
+    users_search <- all_series
     
   }
-
+    
+   # Setting labels in selected language
+   if (language == 'en') {
+     users_search %<>%
+       purrr::set_names(c('code', 'name', 'theme', 'source',
+                          'freq', 'lastupdate', 'status')) %>%
+       sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
+                               'Source', 'Frequency','Last Update','Status'))
+   } else {
+     users_search %<>%
+       purrr::set_names(c('codigo', 'nome', 'bnome', 'fonte',
+                          'freq', 'ultimaatualizacao', 'status')) %>%
+       sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
+                               'Frequencia','Ultima Atualizacao','Status'))
+   }
+  
+  users_search
+    
 }
 
 # Change frequency ------------------------------------------------
