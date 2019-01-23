@@ -775,3 +775,95 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 
   values
 }
+
+# Search by terms ------------------------------------------------
+
+#' @title List with searched series
+#'
+#' @description Returns a list with searched series by terms from Ipeadata API database.
+#'
+#' @usage search_series(terms = NULL, fields = c('name'), language = c("en", "br"))
+#' 
+#' @param terms A character vector with search terms.
+#' @param fields A character vector with table fields where matches are sought. See 'Details'.
+#' @param language String specifying the selected language. Language options are
+#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' 
+#' @details When \code{language = "en"}, the \code{fields} options are \code{"code"},
+#' \code{"name"}, \code{"theme"}, \code{"source"}, \code{"freq"}, \code{"lastupdate"} 
+#' and \code{"status"}.
+#' 
+#' When \code{language = "br"}, the \code{fields} options are \code{"codigo"},
+#' \code{"nome"}, \code{"bnome"}, \code{"fonte"}, \code{"freq"}, \code{"ultimaatualizacao"} 
+#' and \code{"status"}.
+#'
+#' @return A data frame containing Ipeadata code, name, theme, source,
+#' frequency, last update and activity status of searched series.
+#'
+#' @examples
+#' \dontrun{
+#' # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
+#' ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
+#' 
+#' # Search by 'Portugal' in 'name'
+#' Portugal_series <- search_series(terms = c('Portugal'), fields = c('name'))
+#' 
+#' }
+#'
+#' @note The original language of the available series' names were preserved.
+#'
+#' @export
+
+search_series <- function(terms = NULL, fields = c('name'), language = c("en", "br")) {
+
+  # Check language arg
+  language <- match.arg(language)
+  
+  # Getting all series
+  all_series <- available_series(language = language)
+  
+  # Searching
+  users_search <- dplyr::as_tibble(NULL)
+  
+  if (!is.null(terms)) {
+    
+    for (i in 1:length(fields)) {
+      
+      for (j in 1:length(terms)) {
+        
+        users_search %<>% 
+          dplyr::bind_rows(users_search, 
+                           all_series %>% 
+                           dplyr::filter_(~ grepl(pattern = terms[j], x = get(fields[i])))) %>%
+          dplyr::distinct()
+        
+      }
+      
+    }
+    
+  } else {
+    
+    users_search <- all_series
+    
+  }
+    
+   # Setting labels in selected language
+   if (language == 'en') {
+     users_search %<>%
+       purrr::set_names(c('code', 'name', 'theme', 'source',
+                          'freq', 'lastupdate', 'status')) %>%
+       sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
+                               'Source', 'Frequency','Last Update','Status'))
+   } else {
+     users_search %<>%
+       purrr::set_names(c('codigo', 'nome', 'bnome', 'fonte',
+                          'freq', 'ultimaatualizacao', 'status')) %>%
+       sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
+                               'Frequencia','Ultima Atualizacao','Status'))
+   }
+  
+  users_search
+    
+}
+
+# Change frequency ------------------------------------------------
