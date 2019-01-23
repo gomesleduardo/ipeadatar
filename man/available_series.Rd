@@ -21,10 +21,13 @@ Returns a list with available series from Ipeadata API database.
 The original language of the available series' names were preserved.
 }
 \examples{
+\dontrun{
 # Available series (in English)
 all_series <- available_series()
 
 # Available series (in Brazilian portuguese)
 all_seriesBR <- available_series(language = "br")
+
+}
 
 }

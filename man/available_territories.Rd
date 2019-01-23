@@ -19,10 +19,13 @@ Returns a list with available Brazilian territorial
  divisions from Ipeadata API database.
 }
 \examples{
+\dontrun{
 # Available territories (in English)
 all_territories <- available_territories()
 
 # Available territories (in Brazilian portuguese)
 all_territoriesBR <- available_territories(language = "br")
+
+}
 
 }

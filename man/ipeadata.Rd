@@ -25,19 +25,21 @@ Returns a list with available database about the requested series.
 The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
+\dontrun{
+
 # Data from
 # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
 # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
 data <- ipeadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
-
 # Data from
 # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
 # in Brazilian portuguese
 dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
-
 # Regional data from
 # "CONSUMOTOT": Electric energy consumption, Brazil
 dataReg <- ipeadata(code = "CONSUMOTOT")
+
+}
 
 }
 \references{
