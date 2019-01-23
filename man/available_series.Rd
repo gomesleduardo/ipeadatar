@@ -11,14 +11,14 @@ available_series(language = c("en", "br"))
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
-A data frame containing Ipeadata code, name, source,
+A data frame containing Ipeadata code, name, theme, source,
 frequency, last update and activity status of available series.
 }
 \description{
 Returns a list with available series from Ipeadata API database.
 }
 \note{
-The original language of the available series’ names were preserved.
+The original language of the available series' names were preserved.
 }
 \examples{
 # Available series (in English)

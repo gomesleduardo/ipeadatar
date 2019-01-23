@@ -23,7 +23,7 @@
 #' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
-#' @return A data frame containing Ipeadata code, name, source,
+#' @return A data frame containing Ipeadata code, name, theme, source,
 #' frequency, last update and activity status of available series.
 #'
 #' @examples
@@ -33,7 +33,7 @@
 #' # Available series (in Brazilian portuguese)
 #' all_seriesBR <- available_series(language = "br")
 #'
-#' @note The original language of the available series’ names were preserved.
+#' @note The original language of the available series' names were preserved.
 #'
 #' @export
 #'
@@ -56,8 +56,9 @@ available_series <- function(language = c("en", "br")) {
   series <-
     jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
     dplyr::as_tibble() %>%
-    dplyr::select_(.dots = c('SERCODIGO', 'SERNOME', 'FNTSIGLA', 'PERNOME', 'SERATUALIZACAO', 'SERSTATUS')) %>%
-    dplyr::arrange_(.dots = c('FNTSIGLA', 'PERNOME', 'SERCODIGO')) %>%
+    dplyr::select_(.dots = c('SERCODIGO', 'SERNOME', 'BASNOME', 'FNTSIGLA', 
+                             'PERNOME', 'SERATUALIZACAO', 'SERSTATUS')) %>%
+    dplyr::arrange_(.dots = c('BASNOME', 'FNTSIGLA', 'PERNOME', 'SERCODIGO')) %>%
     dplyr::mutate_(FNTSIGLA = ~ as.factor(FNTSIGLA)) %>%
     dplyr::mutate_(SERATUALIZACAO = ~ lubridate::as_date(SERATUALIZACAO)) %>%
     dplyr::mutate_(SERSTATUS = ~ as.character(SERSTATUS)) %>%
@@ -72,16 +73,20 @@ available_series <- function(language = c("en", "br")) {
                                            labels =  c('Active', 'Inactive', ''))) %>%
         dplyr::mutate_(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
         dplyr::mutate_(PERNOME = ~ factor(PERNOME,
-                                         levels = c('Anual', 'Decenal', 'Diaria',
+                                         levels = c('Anual', 'Decenal', 'Diaria', 'Irregular',
                                                     'Mensal', 'Quadrienal', 'Quinquenal',
                                                     'Semestral', 'Trimestral', 'Nao se aplica'),
-                                         labels = c('Yearly', 'Decennial', 'Daily',
+                                         labels = c('Yearly', 'Decennial', 'Daily', 'Irregular',
                                                     'Monthly', 'Quadrennial', 'Quinquennial',
                                                     'Semiannual', 'Quarterly', 'Not applicable'))) %>%
-        purrr::set_names(c('code', 'name', 'source',
+        dplyr::mutate_(BASNOME = ~ iconv(BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+        dplyr::mutate_(BASNOME = ~ factor(BASNOME,
+                                          levels = c('Macroeconomico', 'Regional', 'Social'),
+                                          labels = c('Macroeconomic', 'Regional', 'Social'))) %>% 
+        purrr::set_names(c('code', 'name', 'theme', 'source',
                            'freq', 'lastupdate', 'status')) %>%
-        sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)','Source',
-                                'Frequency','Last Update','Status'))
+        sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
+                                'Source', 'Frequency','Last Update','Status'))
 
     } else {
 
@@ -89,10 +94,11 @@ available_series <- function(language = c("en", "br")) {
         dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
                                            levels = c('A', 'I', ''),
                                            labels =  c('Ativa', 'Inativa', ''))) %>%
+        dplyr::mutate_(BASNOME = ~ factor(BASNOME)) %>%
         dplyr::mutate_(PERNOME = ~ factor(PERNOME)) %>%
-        purrr::set_names(c('codigo', 'nome', 'fonte',
+        purrr::set_names(c('codigo', 'nome', 'bnome', 'fonte',
                            'freq', 'ultimaatualizacao', 'status')) %>%
-        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie','Fonte',
+        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
                                 'Frequencia','Ultima Atualizacao','Status'))
 
     }
@@ -379,7 +385,7 @@ available_territories <- function(language = c("en", "br")) {
 #'
 #' @usage metadata(code, language = c("en", "br"), quiet = FALSE)
 #'
-#' @param code Vector with Ipeadata code.
+#' @param code A character vector with Ipeadata code.
 #' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #' @param quiet Logical. If \code{FALSE} (default), a progress bar is shown.
@@ -560,10 +566,10 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                   "MWh", "toe", "Ratio/relation", "Quantity", "Real", "Basic salary", "Celsius Degree", "mm/month"))) %>%
       dplyr::mutate_(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
       dplyr::mutate_(PERNOME = ~ factor(PERNOME,
-                                       levels = c('Anual', 'Decenal', 'Diaria',
+                                       levels = c('Anual', 'Decenal', 'Diaria', 'Irregular',
                                                   'Mensal', 'Quadrienal', 'Quinquenal',
                                                   'Semestral', 'Trimestral', 'Nao se aplica'),
-                                       labels = c('Yearly', 'Decennial', 'Daily',
+                                       labels = c('Yearly', 'Decennial', 'Daily', 'Irregular',
                                                   'Monthly', 'Quadrennial', 'Quinquennial',
                                                   'Semiannual', 'Quarterly', 'Not applicable'))) %>%
       dplyr::mutate_(MULNOME = ~ iconv(MULNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
@@ -616,7 +622,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #'
 #' @usage ipeadata(code, language = c("en", "br"), quiet = FALSE)
 #'
-#' @param code Vector with Ipeadata code.
+#' @param code A character vector with Ipeadata code.
 #' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #' @param quiet Logical. If \code{FALSE} (default), a progress bar is shown.
@@ -760,6 +766,92 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   }
 
   values
+}
+
+# Search by terms ------------------------------------------------
+
+#' @title List with searched series
+#'
+#' @description Returns a list with searched series by terms from Ipeadata API database.
+#'
+#' @usage search(terms, fields, language = c("en", "br"))
+#' 
+#' @param terms A character vector with search terms.
+#' @param fields A character vector with table fields where matches are sought. See 'Details'.
+#' @param language String specifying the selected language. Language options are
+#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' 
+#' @details When \code{language = "en"}, the \code{fields} options are \code{"code"},
+#' \code{"name"}, \code{"theme"}, \code{"source"}, \code{"freq"}, \code{"lastupdate"} 
+#' and \code{"status"}.
+#' 
+#' When \code{language = "br"}, the \code{fields} options are \code{"codigo"},
+#' \code{"nome"}, \code{"bnome"}, \code{"fonte"}, \code{"freq"}, \code{"ultimaatualizacao"} 
+#' and \code{"status"}.
+#'
+#' @return A data frame containing Ipeadata code, name, theme, source,
+#' frequency, last update and activity status of searched series.
+#'
+#' @examples
+#' # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
+#' ICMS_series <- search(terms = c('ICMS'), fields = c('name'))
+#' 
+#' # Search by 'Portugal' in 'name'
+#' Portugal_series <- search(terms = c('Portugal'), fields = c('name'))
+#'
+#' @note The original language of the available series' names were preserved.
+#'
+#' @export
+
+search <- function(terms, fields, language = c("en", "br")) {
+  
+  # Check language arg
+  language <- match.arg(language)
+  
+  # Getting all series
+  all_series <- available_series(language = language)
+  
+  # Searching 
+  users_search <- dplyr::as_tibble(NULL)
+  ii <- NULL
+  
+  # Define field
+  for (k in 1:length(fields)) {
+    
+    users_search_aux <- as.data.frame(subset(x = all_series, select = fields[k]))
+    
+    # Find term in current field
+    for (j in 1:length(terms)) {
+    
+      if (length(i <- grep(pattern = terms[j], x = users_search_aux[, 1]))) {
+        ii <- c(ii,i)
+        
+      }
+    }
+    
+  }
+  
+  users_search <- all_series[sort(unique(ii)), ]
+  
+  # Setting labels in selected language
+  if (language == 'en') {
+    
+    users_search %<>%
+      purrr::set_names(c('code', 'name', 'theme', 'source',
+                         'freq', 'lastupdate', 'status')) %>%
+      sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
+                              'Source', 'Frequency','Last Update','Status'))
+    
+  } else {
+    
+    users_search %<>%
+      purrr::set_names(c('codigo', 'nome', 'bnome', 'fonte',
+                         'freq', 'ultimaatualizacao', 'status')) %>%
+      sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
+                              'Frequencia','Ultima Atualizacao','Status'))
+    
+  }
+  
 }
 
 # Change frequency ------------------------------------------------

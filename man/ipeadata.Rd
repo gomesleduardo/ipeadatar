@@ -7,7 +7,7 @@
 ipeadata(code, language = c("en", "br"), quiet = FALSE)
 }
 \arguments{
-\item{code}{Vector with Ipeadata code.}
+\item{code}{A character vector with Ipeadata code.}
 
 \item{language}{String specifying the selected language. Language options are
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
