@@ -835,7 +835,7 @@ search_series <- function(terms = NULL, fields = c('name'), language = c("en", "
       # Find term in current field
       for (j in 1:length(terms)) {
         
-        if (length(i <- base::grepl(pattern = terms[j], x = users_search_aux[, 1], fixed = TRUE))) {
+        if (length(i <- base::grep(pattern = terms[j], x = users_search_aux[, 1], fixed = TRUE))) {
           ii <- c(ii,i)
           
         }
