@@ -1,6 +1,7 @@
 Package: ipeadatar
-Version: 0.1.0
+Type: Package
 Title: API Wrapper for 'Ipeadata'
+Version: 0.1.0
 Authors@R: c(
     person("Luiz Eduardo S.","Gomes", role=c("aut","cre"), email="gomes.leduardo@gmail.com"),
     person("Jessyka A. P.","Goltara", role=c("ctb"), email="jessykagoltara@gmail.com")
@@ -13,10 +14,11 @@ Description: Allows directly access to the macroeconomic,
              Brazilian Institute for Applied Economic Research ('Ipea').
              This R package uses the 'Ipeadata' API. For more information, 
              see <http://www.ipeadata.gov.br/api/>.
+Depends: R (>= 3.5.1)
 License: MIT + file LICENSE
 Encoding: UTF-8
 URL: http://github.com/gomesleduardo/ipeadatar
 BugReports: http://github.com/gomesleduardo/ipeadatar/issues
+Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled, curl
 LazyData: true
 RoxygenNote: 6.1.0
-Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled, curl
