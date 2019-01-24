@@ -4,7 +4,7 @@
 
 ## Instalation
 
-The package is only available in **GitLab**. 
+The package is only available in **GitHub**. 
 
 To install and load manually:
 
