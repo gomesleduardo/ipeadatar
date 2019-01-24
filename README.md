@@ -1,6 +1,6 @@
 # R package for Ipeadata API database 
 
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/sidrar)](https://CRAN.R-project.org/package=sidrar) [![CRAC\_Downloads](https://cranlogs.r-pkg.org/badges/grand-total/sidrar)](https://CRAN.R-project.org/package=sidrar)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ipeadatar)](https://CRAN.R-project.org/package=ipeadatar) [![CRAC\_Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ipeadatar)](https://CRAN.R-project.org/package=ipeadatar)
 
 ## Instalation
 
