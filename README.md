@@ -11,7 +11,7 @@ To install and load manually:
 ```{r eval=FALSE}
 install.packages("devtools")
 devtools::install_github("gomesleduardo/ipeadatar")
-library(ipeadata)
+library(ipeadatar)
 ````
 
 ## Help
