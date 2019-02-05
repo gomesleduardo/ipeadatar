@@ -21,7 +21,7 @@ Returns a list with available series from Ipeadata API database.
 The original language of the available series' names were preserved.
 }
 \examples{
-\dontrun{
+\donttest{
 # Available series (in English)
 all_series <- available_series()
 

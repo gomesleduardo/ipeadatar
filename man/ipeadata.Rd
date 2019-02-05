@@ -25,7 +25,7 @@ Returns a list with available database about the requested series.
 The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
-\dontrun{
+\donttest{
 
 # Data from
 # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
@@ -44,7 +44,7 @@ dataReg <- ipeadata(code = "CONSUMOTOT")
 }
 \references{
 This R package uses the Ipeadata API.
-For more information go to \url{http://www.ipeadata.gov.br/api/}.
+For more information go to \url{http://www.ipeadata.gov.br/}.
 }
 \seealso{
 \code{\link{available_series}}, \code{\link{available_territories}}

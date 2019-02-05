@@ -27,7 +27,7 @@
 #' frequency, last update and activity status of available series.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Available series (in English)
 #' all_series <- available_series()
 #' 
@@ -99,8 +99,8 @@ available_series <- function(language = c("en", "br")) {
                                            labels =  c('Ativa', 'Inativa', ''))) %>%
         dplyr::mutate_(BASNOME = ~ factor(BASNOME)) %>%
         dplyr::mutate_(PERNOME = ~ factor(PERNOME)) %>%
-        purrr::set_names(c('codigo', 'nome', 'bnome', 'fonte',
-                           'freq', 'ultimaatualizacao', 'status')) %>%
+        purrr::set_names(c('code', 'name', 'theme', 'source',
+                           'freq', 'lastupdate', 'status')) %>%
         sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
                                 'Frequencia','Ultima Atualizacao','Status'))
 
@@ -186,7 +186,7 @@ available_subjects <- function(language = c("en", "br")) {
 
     subjects %<>%
       dplyr::mutate_(TEMNOME = ~ factor(TEMNOME)) %>%
-      purrr::set_names(c('scodigo', 'snome')) %>%
+      purrr::set_names(c('scode', 'sname')) %>%
       sjlabelled::set_label(c('Codigo do Tema','Nome do Tema'))
 
   }
@@ -275,7 +275,7 @@ available_countries <- function(language = c("en", "br")) {
   } else {
 
     countries %<>%
-      purrr::set_names(c('tcodigo', 'tnome')) %>%
+      purrr::set_names(c('tcode', 'tname')) %>%
       sjlabelled::set_label(c('Codigo do Pais (ISO 3)','Nome do Pais'))
 
   }
@@ -299,7 +299,7 @@ available_countries <- function(language = c("en", "br")) {
 #'  of Brazilian territorial divisions.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Available territories (in English)
 #' all_territories <- available_territories()
 #' 
@@ -374,7 +374,7 @@ available_territories <- function(language = c("en", "br")) {
                                                                            which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 1872-00')
                                                                       )], ordered = TRUE)) %>%
       dplyr::arrange_(.dots = c('NIVNOME')) %>%
-      purrr::set_names(c('unome', 'tcodigo', 'tnome', 'area')) %>%
+      purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
       sjlabelled::set_label(c('Nome da Unidade Territorial',
                               'Codigo Territorial','Nome do Territorio','Area (Km2)'))
 
@@ -422,7 +422,7 @@ available_territories <- function(language = c("en", "br")) {
 #' \code{\link{available_territories}}
 #'
 #' @references This R package uses the Ipeadata API.
-#' For more information go to \url{http://www.ipeadata.gov.br/api/}.
+#' For more information go to \url{http://www.ipeadata.gov.br/}.
 #'
 #' @export
 #'
@@ -438,7 +438,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 
   # Progress Bar settings
   if (!quiet & (length(code) >= 2)) {
-    cat("Requesting Ipeadata API <http://www.ipeadata.gov.br/api/>")
+    cat("Requesting Ipeadata API <http://www.ipeadata.gov.br/>")
     cat('\n')
     pb <- txtProgressBar(min = 0, max = length(code), style = 3)
   }
@@ -607,9 +607,9 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
       dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
                                          levels = c('A', 'I', ''),
                                          labels = c('Ativa', 'Inativa', ''))) %>%
-      purrr::set_names(c('codigo', 'nome', 'coment', 'ultimaatualizacao', 'bnome', 'fonte', 'fontenome',
-                         'fonteurl', 'freq', 'unid', 'fm', 'status',
-                         'scodigo', 'tcodigo')) %>%
+      purrr::set_names(c('code', 'name', 'comment', 'lastupdate', 'bname', 'source', 'sourcename',
+                         'sourceurl', 'freq', 'unity', 'mf', 'status',
+                         'scode', 'tcode')) %>%
       sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie (PT-BR)', 'Comentario', 'Ultima Atualizacao',
                               'Nome da Base', 'Fonte', 'Nome da Fonte', 'URL da Fonte',
                               'Frequencia', 'Unidade', 'Fator Multiplicador', 'Status',
@@ -641,7 +641,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @seealso \code{\link{available_series}}, \code{\link{available_territories}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' 
 #' # Data from
 #' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
@@ -658,7 +658,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' }
 #'
 #' @references This R package uses the Ipeadata API.
-#' For more information go to \url{http://www.ipeadata.gov.br/api/}.
+#' For more information go to \url{http://www.ipeadata.gov.br/}.
 #'
 #' @export
 #'
@@ -674,7 +674,7 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 
   # Progress Bar settings
   if (!quiet & (length(code) >= 2)) {
-    cat("Requesting Ipeadata API <http://www.ipeadata.gov.br/api/>")
+    cat("Requesting Ipeadata API <http://www.ipeadata.gov.br/>")
     cat('\n')
     pb <- txtProgressBar(min = 0, max = length(code), style = 3)
   }
@@ -766,7 +766,7 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                          which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 20-00'),
                                          which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 1872-00')
                                        )], ordered = TRUE)) %>%
-      purrr::set_names(c('codigo', 'data', 'valor', 'unome', 'tcodigo')) %>%
+      purrr::set_names(c('code', 'date', 'value', 'uname', 'tcode')) %>%
       sjlabelled::set_label(c('Codigo Ipeadata', 'Data', 'Valor',
                               'Nome da Unidade Territorial',
                               'Codigo de Pais ou Territorial'))
@@ -789,19 +789,14 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #' 
-#' @details When \code{language = "en"}, the \code{fields} options are \code{"code"},
-#' \code{"name"}, \code{"theme"}, \code{"source"}, \code{"freq"}, \code{"lastupdate"} 
-#' and \code{"status"}.
-#' 
-#' When \code{language = "br"}, the \code{fields} options are \code{"codigo"},
-#' \code{"nome"}, \code{"bnome"}, \code{"fonte"}, \code{"freq"}, \code{"ultimaatualizacao"} 
-#' and \code{"status"}.
+#' @details The \code{fields} options are \code{"code"}, \code{"name"}, \code{"theme"}, 
+#' \code{"source"}, \code{"freq"}, \code{"lastupdate"} and \code{"status"}.
 #'
 #' @return A data frame containing Ipeadata code, name, theme, source,
 #' frequency, last update and activity status of searched series.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
 #' ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
 #' 
@@ -856,8 +851,8 @@ search_series <- function(terms = NULL, fields = c('name'), language = c("en", "
                                'Source', 'Frequency','Last Update','Status'))
    } else {
      users_search %<>%
-       purrr::set_names(c('codigo', 'nome', 'bnome', 'fonte',
-                          'freq', 'ultimaatualizacao', 'status')) %>%
+       purrr::set_names(c('code', 'name', 'theme', 'source',
+                          'freq', 'lastupdate', 'status')) %>%
        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
                                'Frequencia','Ultima Atualizacao','Status'))
    }

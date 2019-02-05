@@ -44,7 +44,7 @@ metaReg <- metadata(code = "CONSUMOTOT")
 }
 \references{
 This R package uses the Ipeadata API.
-For more information go to \url{http://www.ipeadata.gov.br/api/}.
+For more information go to \url{http://www.ipeadata.gov.br/}.
 }
 \seealso{
 \code{\link{available_series}}, \code{\link{available_subjects}},

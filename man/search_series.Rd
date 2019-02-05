@@ -22,19 +22,14 @@ frequency, last update and activity status of searched series.
 Returns a list with searched series by terms from Ipeadata API database.
 }
 \details{
-When \code{language = "en"}, the \code{fields} options are \code{"code"},
-\code{"name"}, \code{"theme"}, \code{"source"}, \code{"freq"}, \code{"lastupdate"} 
-and \code{"status"}.
-
-When \code{language = "br"}, the \code{fields} options are \code{"codigo"},
-\code{"nome"}, \code{"bnome"}, \code{"fonte"}, \code{"freq"}, \code{"ultimaatualizacao"} 
-and \code{"status"}.
+The \code{fields} options are \code{"code"}, \code{"name"}, \code{"theme"}, 
+\code{"source"}, \code{"freq"}, \code{"lastupdate"} and \code{"status"}.
 }
 \note{
 The original language of the available series' names were preserved.
 }
 \examples{
-\dontrun{
+\donttest{
 # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
 ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
 
