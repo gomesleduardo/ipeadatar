@@ -13,7 +13,7 @@ Description: Allows directly access to the macroeconomic,
              financial and regional database maintained by 
              Brazilian Institute for Applied Economic Research ('Ipea').
              This R package uses the 'Ipeadata' API. For more information, 
-             see <http://www.ipeadata.gov.br/api/>.
+             see <http://www.ipeadata.gov.br/>.
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
