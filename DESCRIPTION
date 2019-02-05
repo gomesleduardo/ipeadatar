@@ -22,5 +22,3 @@ BugReports: http://github.com/gomesleduardo/ipeadatar/issues
 Imports: jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled, curl
 LazyData: true
 RoxygenNote: 6.1.0
-NeedsCompilation: no
-Packaged: 2019-01-23 22:13:26 UTC; T207056565
