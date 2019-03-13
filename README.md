@@ -35,4 +35,4 @@ install_github("gomesleduardo/ipeadatar")
 
 For more details and examples, see [R Documentation](https://cran.r-project.org/web/packages/ipeadatar/ipeadatar.pdf).
 
-For a brief tutorial, check this [page](https://gomesleduardo.000webhostapp.com/ipeadatar_tutorial.html).
+For a brief tutorial, visit this [vignette](https://gomesleduardo.000webhostapp.com/ipeadatar_tutorial.html).
