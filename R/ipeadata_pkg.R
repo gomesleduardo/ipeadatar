@@ -831,9 +831,9 @@ search_series <- function(terms = NULL, fields = c('name'), language = c("en", "
         users_search %<>% 
           dplyr::bind_rows(users_search, 
                            all_series %>% 
-                           dplyr::filter_(~ grepl(pattern = terms[j], x = get(fields[i])))) %>%
+                             dplyr::filter_(~ stringr::str_detect(string = get(fields[i]), pattern = terms[j]))) %>%
           dplyr::distinct()
-        
+
       }
       
     }
