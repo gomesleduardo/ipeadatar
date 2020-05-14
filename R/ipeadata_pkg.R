@@ -40,7 +40,7 @@
 #'
 #' @export
 #'
-#' @importFrom magrittr %<>%
+#' @importFrom magrittr %<>% %>%
 
 available_series <- function(language = c("en", "br")) {
 
@@ -206,13 +206,15 @@ available_subjects <- function(language = c("en", "br")) {
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing ISO 3 code and name of available countries.
-#'
+#' 
 #' @examples
+#' \donttest{
 #' # Available countries (in English)
 #' all_countries <- available_countries()
-#'
+#' 
 #' # Available countries (in Brazilian portuguese)
 #' all_countriesBR <- available_countries(language = "br")
+#' }
 #'
 #' @export
 

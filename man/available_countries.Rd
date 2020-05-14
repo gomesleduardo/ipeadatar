@@ -17,10 +17,12 @@ A data frame containing ISO 3 code and name of available countries.
 Returns a list with available countries from Ipeadata API database.
 }
 \examples{
+\donttest{
 # Available countries (in English)
 all_countries <- available_countries()
 
 # Available countries (in Brazilian portuguese)
 all_countriesBR <- available_countries(language = "br")
+}
 
 }
