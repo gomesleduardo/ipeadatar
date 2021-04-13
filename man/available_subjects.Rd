@@ -17,10 +17,13 @@ A data frame containing code and name of available subjects.
 Returns a list with available subjects from Ipeadata API database.
 }
 \examples{
+\donttest{
 # Available subjects (in English)
 all_subjects <- available_subjects()
 
 # Available subjects (in Brazilian portuguese)
 all_subjectsBR <- available_subjects(language = "br")
+
+}
 
 }
