@@ -17,8 +17,8 @@ Description: Allows direct access to the macroeconomic,
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
-URL: http://github.com/gomesleduardo/ipeadatar
-BugReports: http://github.com/gomesleduardo/ipeadatar/issues
-Imports: curl, stringr, jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled
+URL: https://github.com/gomesleduardo/ipeadatar
+BugReports: https://github.com/gomesleduardo/ipeadatar/issues
+Imports: stringr, jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled
 LazyData: true
 RoxygenNote: 7.1.0
