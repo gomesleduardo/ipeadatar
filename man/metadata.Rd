@@ -27,6 +27,7 @@ The original language of the available series' names and the comments were prese
 The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
+\donttest{
 # Metadata about
 # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
 # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
@@ -40,6 +41,7 @@ metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
 # Regional metadata about
 # "CONSUMOTOT": Electric energy consumption, Brazil
 metaReg <- metadata(code = "CONSUMOTOT")
+}
 
 }
 \references{

@@ -9,7 +9,7 @@
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
 # |   Version: 0.1.3                                               | #
-# |   April 27, 2021                                               | #
+# |   April 28, 2021                                               | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -406,6 +406,7 @@ available_territories <- function(language = c("en", "br")) {
 #'  subject code and the country or territorial code of requested series.
 #'
 #' @examples
+#' \donttest{
 #' # Metadata about
 #' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
 #' # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
@@ -419,6 +420,7 @@ available_territories <- function(language = c("en", "br")) {
 #' # Regional metadata about
 #' # "CONSUMOTOT": Electric energy consumption, Brazil
 #' metaReg <- metadata(code = "CONSUMOTOT")
+#' }
 #'
 #' @note The original language of the available series' names and the comments were preserved.
 #' The Ipeadata codes may be required by \code{available_series()}.
