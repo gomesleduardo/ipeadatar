@@ -9,7 +9,7 @@
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
 # |   Version: 0.1.3                                               | #
-# |   April 28, 2021                                               | #
+# |   May 01, 2021                                                 | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -28,12 +28,15 @@
 #'
 #' @examples
 #' \donttest{
+#' if (interactive()) {
+#' 
 #' # Available series (in English)
 #' all_series <- available_series()
 #' 
 #' # Available series (in Brazilian portuguese)
 #' all_seriesBR <- available_series(language = "br")
 #' 
+#' }
 #' }
 #' 
 #' @note The original language of the available series' names were preserved.
@@ -124,12 +127,15 @@ available_series <- function(language = c("en", "br")) {
 #'
 #' @examples
 #' \donttest{
+#' #' if (interactive()) {
+#' 
 #' # Available subjects (in English)
 #' all_subjects <- available_subjects()
 #'
 #' # Available subjects (in Brazilian portuguese)
 #' all_subjectsBR <- available_subjects(language = "br")
 #' 
+#' }
 #' }
 #'
 #' @export
@@ -212,11 +218,14 @@ available_subjects <- function(language = c("en", "br")) {
 #' 
 #' @examples
 #' \donttest{
+#' #' if (interactive()) {
+#' 
 #' # Available countries (in English)
 #' all_countries <- available_countries()
 #' 
 #' # Available countries (in Brazilian portuguese)
 #' all_countriesBR <- available_countries(language = "br")
+#' }
 #' }
 #'
 #' @export
@@ -305,12 +314,15 @@ available_countries <- function(language = c("en", "br")) {
 #'
 #' @examples
 #' \donttest{
+#' #' if (interactive()) {
+#' 
 #' # Available territories (in English)
 #' all_territories <- available_territories()
 #' 
 #' # Available territories (in Brazilian portuguese)
 #' all_territoriesBR <- available_territories(language = "br")
 #'
+#' }
 #' }
 #' 
 #' @export
@@ -407,6 +419,8 @@ available_territories <- function(language = c("en", "br")) {
 #'
 #' @examples
 #' \donttest{
+#' #' if (interactive()) {
+#' 
 #' # Metadata about
 #' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
 #' # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
@@ -420,6 +434,7 @@ available_territories <- function(language = c("en", "br")) {
 #' # Regional metadata about
 #' # "CONSUMOTOT": Electric energy consumption, Brazil
 #' metaReg <- metadata(code = "CONSUMOTOT")
+#' }
 #' }
 #'
 #' @note The original language of the available series' names and the comments were preserved.
@@ -650,6 +665,8 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @examples
 #' \donttest{
 #' 
+#' #' if (interactive()) {
+#' 
 #' # Data from
 #' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
 #' # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
@@ -662,6 +679,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' # "CONSUMOTOT": Electric energy consumption, Brazil
 #' dataReg <- ipeadata(code = "CONSUMOTOT")
 #' 
+#' }
 #' }
 #'
 #' @references This R package uses the Ipeadata API.
@@ -804,12 +822,15 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #'
 #' @examples
 #' \donttest{
+#' #' if (interactive()) {
+#' 
 #' # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
 #' ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
 #' 
 #' # Search by 'Portugal' in 'name'
 #' Portugal_series <- search_series(terms = c('Portugal'), fields = c('name'))
 #' 
+#' }
 #' }
 #'
 #' @note The original language of the available series' names were preserved.
