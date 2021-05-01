@@ -26,8 +26,7 @@ The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
 \donttest{
-
-#' if (interactive()) {
+if (interactive()) {
 
 # Data from
 # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
@@ -40,7 +39,6 @@ dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
 # Regional data from
 # "CONSUMOTOT": Electric energy consumption, Brazil
 dataReg <- ipeadata(code = "CONSUMOTOT")
-
 }
 }
 

@@ -35,7 +35,6 @@
 #' 
 #' # Available series (in Brazilian portuguese)
 #' all_seriesBR <- available_series(language = "br")
-#' 
 #' }
 #' }
 #' 
@@ -127,14 +126,13 @@ available_series <- function(language = c("en", "br")) {
 #'
 #' @examples
 #' \donttest{
-#' #' if (interactive()) {
+#' if (interactive()) {
 #' 
 #' # Available subjects (in English)
 #' all_subjects <- available_subjects()
 #'
 #' # Available subjects (in Brazilian portuguese)
 #' all_subjectsBR <- available_subjects(language = "br")
-#' 
 #' }
 #' }
 #'
@@ -218,7 +216,7 @@ available_subjects <- function(language = c("en", "br")) {
 #' 
 #' @examples
 #' \donttest{
-#' #' if (interactive()) {
+#' if (interactive()) {
 #' 
 #' # Available countries (in English)
 #' all_countries <- available_countries()
@@ -314,14 +312,13 @@ available_countries <- function(language = c("en", "br")) {
 #'
 #' @examples
 #' \donttest{
-#' #' if (interactive()) {
+#' if (interactive()) {
 #' 
 #' # Available territories (in English)
 #' all_territories <- available_territories()
 #' 
 #' # Available territories (in Brazilian portuguese)
 #' all_territoriesBR <- available_territories(language = "br")
-#'
 #' }
 #' }
 #' 
@@ -419,7 +416,7 @@ available_territories <- function(language = c("en", "br")) {
 #'
 #' @examples
 #' \donttest{
-#' #' if (interactive()) {
+#' if (interactive()) {
 #' 
 #' # Metadata about
 #' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
@@ -664,8 +661,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #'
 #' @examples
 #' \donttest{
-#' 
-#' #' if (interactive()) {
+#' if (interactive()) {
 #' 
 #' # Data from
 #' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
@@ -678,7 +674,6 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' # Regional data from
 #' # "CONSUMOTOT": Electric energy consumption, Brazil
 #' dataReg <- ipeadata(code = "CONSUMOTOT")
-#' 
 #' }
 #' }
 #'
@@ -822,14 +817,13 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #'
 #' @examples
 #' \donttest{
-#' #' if (interactive()) {
+#' if (interactive()) {
 #' 
 #' # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
 #' ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
 #' 
 #' # Search by 'Portugal' in 'name'
 #' Portugal_series <- search_series(terms = c('Portugal'), fields = c('name'))
-#' 
 #' }
 #' }
 #'

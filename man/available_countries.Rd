@@ -18,7 +18,7 @@ Returns a list with available countries from Ipeadata API database.
 }
 \examples{
 \donttest{
-#' if (interactive()) {
+if (interactive()) {
 
 # Available countries (in English)
 all_countries <- available_countries()

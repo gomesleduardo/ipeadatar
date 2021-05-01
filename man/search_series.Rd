@@ -30,14 +30,13 @@ The original language of the available series' names were preserved.
 }
 \examples{
 \donttest{
-#' if (interactive()) {
+if (interactive()) {
 
 # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
 ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
 
 # Search by 'Portugal' in 'name'
 Portugal_series <- search_series(terms = c('Portugal'), fields = c('name'))
-
 }
 }
 

@@ -29,7 +29,6 @@ all_series <- available_series()
 
 # Available series (in Brazilian portuguese)
 all_seriesBR <- available_series(language = "br")
-
 }
 }
 

@@ -20,14 +20,13 @@ Returns a list with available Brazilian territorial
 }
 \examples{
 \donttest{
-#' if (interactive()) {
+if (interactive()) {
 
 # Available territories (in English)
 all_territories <- available_territories()
 
 # Available territories (in Brazilian portuguese)
 all_territoriesBR <- available_territories(language = "br")
-
 }
 }
 
