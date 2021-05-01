@@ -28,6 +28,8 @@ The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
 \donttest{
+#' if (interactive()) {
+
 # Metadata about
 # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
 # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
@@ -41,6 +43,7 @@ metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
 # Regional metadata about
 # "CONSUMOTOT": Electric energy consumption, Brazil
 metaReg <- metadata(code = "CONSUMOTOT")
+}
 }
 
 }
