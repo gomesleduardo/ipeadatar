@@ -20,16 +20,3 @@ Returns a list with available series from Ipeadata API database.
 \note{
 The original language of the available series' names were preserved.
 }
-\examples{
-\donttest{
-if (interactive()) {
-
-# Available series (in English)
-all_series <- available_series()
-
-# Available series (in Brazilian portuguese)
-all_seriesBR <- available_series(language = "br")
-}
-}
-
-}

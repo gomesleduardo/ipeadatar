@@ -9,7 +9,7 @@
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
 # |   Version: 0.1.3                                               | #
-# |   May 01, 2021                                                 | #
+# |   June 01, 2021                                                | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -26,18 +26,6 @@
 #' @return A data frame containing Ipeadata code, name, theme, source,
 #' frequency, last update and activity status of available series.
 #'
-#' @examples
-#' \donttest{
-#' if (interactive()) {
-#' 
-#' # Available series (in English)
-#' all_series <- available_series()
-#' 
-#' # Available series (in Brazilian portuguese)
-#' all_seriesBR <- available_series(language = "br")
-#' }
-#' }
-#' 
 #' @note The original language of the available series' names were preserved.
 #'
 #' @export
@@ -125,16 +113,8 @@ available_series <- function(language = c("en", "br")) {
 #' @return A data frame containing code and name of available subjects.
 #'
 #' @examples
-#' \donttest{
-#' if (interactive()) {
-#' 
-#' # Available subjects (in English)
+#' # Available subjects
 #' all_subjects <- available_subjects()
-#'
-#' # Available subjects (in Brazilian portuguese)
-#' all_subjectsBR <- available_subjects(language = "br")
-#' }
-#' }
 #'
 #' @export
 
@@ -215,16 +195,8 @@ available_subjects <- function(language = c("en", "br")) {
 #' @return A data frame containing ISO 3 code and name of available countries.
 #' 
 #' @examples
-#' \donttest{
-#' if (interactive()) {
-#' 
-#' # Available countries (in English)
+#' # Available countries
 #' all_countries <- available_countries()
-#' 
-#' # Available countries (in Brazilian portuguese)
-#' all_countriesBR <- available_countries(language = "br")
-#' }
-#' }
 #'
 #' @export
 
@@ -309,18 +281,6 @@ available_countries <- function(language = c("en", "br")) {
 #'
 #' @return A data frame containing unit name, code, name and area (in km2)
 #'  of Brazilian territorial divisions.
-#'
-#' @examples
-#' \donttest{
-#' if (interactive()) {
-#' 
-#' # Available territories (in English)
-#' all_territories <- available_territories()
-#' 
-#' # Available territories (in Brazilian portuguese)
-#' all_territoriesBR <- available_territories(language = "br")
-#' }
-#' }
 #' 
 #' @export
 
@@ -415,24 +375,9 @@ available_territories <- function(language = c("en", "br")) {
 #'  subject code and the country or territorial code of requested series.
 #'
 #' @examples
-#' \donttest{
-#' if (interactive()) {
-#' 
-#' # Metadata about
-#' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
-#' # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
-#' meta <- metadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
-#'
-#' # Metadata about
+#' # Metadata from
 #' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
-#' # in Brazilian portuguese
-#' metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
-#'
-#' # Regional metadata about
-#' # "CONSUMOTOT": Electric energy consumption, Brazil
-#' metaReg <- metadata(code = "CONSUMOTOT")
-#' }
-#' }
+#' meta <- metadata(code = "PRECOS12_IPCA12")
 #'
 #' @note The original language of the available series' names and the comments were preserved.
 #' The Ipeadata codes may be required by \code{available_series()}.
@@ -660,22 +605,9 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @seealso \code{\link{available_series}}, \code{\link{available_territories}}
 #'
 #' @examples
-#' \donttest{
-#' if (interactive()) {
-#' 
-#' # Data from
-#' # "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
-#' # "SGS366_NASDAQ366": Nasdaq Composite Index - closed
-#' data <- ipeadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
 #' # Data from
 #' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
-#' # in Brazilian portuguese
 #' dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
-#' # Regional data from
-#' # "CONSUMOTOT": Electric energy consumption, Brazil
-#' dataReg <- ipeadata(code = "CONSUMOTOT")
-#' }
-#' }
 #'
 #' @references This R package uses the Ipeadata API.
 #' For more information go to \url{http://www.ipeadata.gov.br/}.
@@ -814,18 +746,6 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #'
 #' @return A data frame containing Ipeadata code, name, theme, source,
 #' frequency, last update and activity status of searched series.
-#'
-#' @examples
-#' \donttest{
-#' if (interactive()) {
-#' 
-#' # Search by 'ICMS' (Brazilian Tax on Circulation of Goods and Services) in 'name'
-#' ICMS_series <- search_series(terms = c('ICMS'), fields = c('name'))
-#' 
-#' # Search by 'Portugal' in 'name'
-#' Portugal_series <- search_series(terms = c('Portugal'), fields = c('name'))
-#' }
-#' }
 #'
 #' @note The original language of the available series' names were preserved.
 #'

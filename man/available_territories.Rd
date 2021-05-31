@@ -18,16 +18,3 @@ A data frame containing unit name, code, name and area (in km2)
 Returns a list with available Brazilian territorial
  divisions from Ipeadata API database.
 }
-\examples{
-\donttest{
-if (interactive()) {
-
-# Available territories (in English)
-all_territories <- available_territories()
-
-# Available territories (in Brazilian portuguese)
-all_territoriesBR <- available_territories(language = "br")
-}
-}
-
-}

@@ -27,24 +27,9 @@ The original language of the available series' names and the comments were prese
 The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
-\donttest{
-if (interactive()) {
-
-# Metadata about
-# "JPM366_EMBI366": J.P. Morgan Emerging Markets Bond Index (EMBI+), Brazil
-# "SGS366_NASDAQ366": Nasdaq Composite Index - closed
-meta <- metadata(code = c("JPM366_EMBI366", "SGS366_NASDAQ366"))
-
-# Metadata about
+# Metadata from
 # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
-# in Brazilian portuguese
-metaBR <- metadata(code = "PRECOS12_IPCA12", language = "br")
-
-# Regional metadata about
-# "CONSUMOTOT": Electric energy consumption, Brazil
-metaReg <- metadata(code = "CONSUMOTOT")
-}
-}
+meta <- metadata(code = "PRECOS12_IPCA12")
 
 }
 \references{
