@@ -8,8 +8,8 @@
 # ------------------------------------------------------------------ #
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
-# |   Version: 0.1.3                                               | #
-# |   June 01, 2021                                                | #
+# |   Version: 0.1.4                                               | #
+# |   July 24, 2021                                                | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -30,7 +30,8 @@
 #'
 #' @export
 #'
-#' @importFrom magrittr %<>% %>%
+#' @importFrom magrittr %<>% %>% 
+#' @importFrom rlang .data
 
 available_series <- function(language = c("en", "br")) {
 
@@ -39,63 +40,86 @@ available_series <- function(language = c("en", "br")) {
 
   # URL for metadata
   url <- 'http://www.ipeadata.gov.br/api/odata4/Metadados/'
-
-  ## Starting: Extract from JSON >
-  ##           Transform to tbl >
-  ##           Select variables >
-  ##           Sort by source, freq and code >
-  ##           Transform in factor >
-  ##           Transform in date >
-  series <-
-    jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
-    dplyr::as_tibble() %>%
-    dplyr::select_(.dots = c('SERCODIGO', 'SERNOME', 'BASNOME', 'FNTSIGLA', 
-                             'PERNOME', 'SERATUALIZACAO', 'SERSTATUS')) %>%
-    dplyr::arrange_(.dots = c('BASNOME', 'FNTSIGLA', 'PERNOME', 'SERCODIGO')) %>%
-    dplyr::mutate_(FNTSIGLA = ~ as.factor(FNTSIGLA)) %>%
-    dplyr::mutate_(SERATUALIZACAO = ~ lubridate::as_date(SERATUALIZACAO)) %>%
-    dplyr::mutate_(SERSTATUS = ~ as.character(SERSTATUS)) %>%
-    dplyr::mutate_(SERSTATUS = ~ dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
-
+  
+  # Output NULL
+  series <- NULL
+  
+  # Test internet connection
+  if (curl::has_internet()) {
+    
+    Sys.sleep(.01)
+    tryCatch({
+      
+      ## Starting: Extract from JSON >
+      ##           Transform to tbl >
+      ##           Select variables >
+      ##           Sort by source, freq and code >
+      ##           Transform in factor >
+      ##           Transform in date >
+      series <-
+        jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
+        dplyr::as_tibble() %>%
+        dplyr::select(.data$SERCODIGO, .data$SERNOME, .data$BASNOME, 
+                      .data$FNTSIGLA, .data$PERNOME, .data$SERATUALIZACAO, 
+                      .data$SERSTATUS) %>%
+        dplyr::arrange(.data$BASNOME, .data$FNTSIGLA, 
+                       .data$PERNOME, .data$SERCODIGO) %>%
+        dplyr::mutate(FNTSIGLA = as.factor(.data$FNTSIGLA)) %>%
+        dplyr::mutate(SERATUALIZACAO = lubridate::as_date(.data$SERATUALIZACAO)) %>%
+        dplyr::mutate(SERSTATUS = as.character(.data$SERSTATUS)) %>%
+        dplyr::mutate(SERSTATUS = dplyr::if_else(is.na(.data$SERSTATUS), 
+                                                 '', 
+                                                 .data$SERSTATUS))
+      
+    }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+    
     # Setting labels in selected language
-    if (language == 'en') {
-
-      series %<>%
-        dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
+    if (!is.null(series)) {
+      
+      if (language == 'en') {
+        
+        series %<>%
+          dplyr::mutate(SERSTATUS = factor(.data$SERSTATUS,
                                            levels = c('A', 'I', ''),
                                            labels =  c('Active', 'Inactive', ''))) %>%
-        dplyr::mutate_(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-        dplyr::mutate_(PERNOME = ~ factor(PERNOME,
+          dplyr::mutate(PERNOME = iconv(.data$PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+          dplyr::mutate(PERNOME = factor(.data$PERNOME,
                                          levels = c('Anual', 'Decenal', 'Diaria', 'Irregular',
                                                     'Mensal', 'Quadrienal', 'Quinquenal',
                                                     'Semestral', 'Trimestral', 'Nao se aplica'),
                                          labels = c('Yearly', 'Decennial', 'Daily', 'Irregular',
                                                     'Monthly', 'Quadrennial', 'Quinquennial',
                                                     'Semiannual', 'Quarterly', 'Not applicable'))) %>%
-        dplyr::mutate_(BASNOME = ~ iconv(BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-        dplyr::mutate_(BASNOME = ~ factor(BASNOME,
-                                          levels = c('Macroeconomico', 'Regional', 'Social'),
-                                          labels = c('Macroeconomic', 'Regional', 'Social'))) %>% 
-        purrr::set_names(c('code', 'name', 'theme', 'source',
-                           'freq', 'lastupdate', 'status')) %>%
-        sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
-                                'Source', 'Frequency','Last Update','Status'))
-
-    } else {
-
-      series %<>%
-        dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
+          dplyr::mutate(BASNOME = iconv(.data$BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+          dplyr::mutate(BASNOME = factor(.data$BASNOME,
+                                         levels = c('Macroeconomico', 'Regional', 'Social'),
+                                         labels = c('Macroeconomic', 'Regional', 'Social'))) %>%
+          purrr::set_names(c('code', 'name', 'theme', 'source',
+                             'freq', 'lastupdate', 'status')) %>%
+          sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
+                                  'Source', 'Frequency','Last Update','Status'))
+        
+      } else {
+        
+        series %<>%
+          dplyr::mutate(SERSTATUS = factor(.data$SERSTATUS,
                                            levels = c('A', 'I', ''),
                                            labels =  c('Ativa', 'Inativa', ''))) %>%
-        dplyr::mutate_(BASNOME = ~ factor(BASNOME)) %>%
-        dplyr::mutate_(PERNOME = ~ factor(PERNOME)) %>%
-        purrr::set_names(c('code', 'name', 'theme', 'source',
-                           'freq', 'lastupdate', 'status')) %>%
-        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
-                                'Frequencia','Ultima Atualizacao','Status'))
-
+          dplyr::mutate(BASNOME = factor(.data$BASNOME)) %>%
+          dplyr::mutate(PERNOME = factor(.data$PERNOME)) %>%
+          purrr::set_names(c('code', 'name', 'theme', 'source',
+                             'freq', 'lastupdate', 'status')) %>%
+          sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
+                                  'Frequencia','Ultima Atualizacao','Status'))
+        
+      }
+      
     }
-
+    
+  } else {
+    message("The internet connection is unavailable.")
+  }
+  
   series
 }
 
@@ -125,57 +149,76 @@ available_subjects <- function(language = c("en", "br")) {
 
   # URL for themes
   url <- 'http://www.ipeadata.gov.br/api/odata4/Temas/'
-
-  ## Starting: Extract from JSON >
-  ##           Transform to tbl >
-  ##           Select variables >
-  ##           Sort by code >
-  ##           Transform in chr
-
-  subjects <-
-    data.frame(jsonlite::fromJSON(url, flatten = TRUE)[[2]]) %>%
-    dplyr::as_tibble() %>%
-    dplyr::select_(.dots = c('TEMCODIGO', 'TEMNOME')) %>%
-    dplyr::arrange_(.dots = c('TEMCODIGO')) %>%
-    dplyr::mutate_(TEMNOME = ~ as.character(TEMNOME))
-
-  # Setting labels in selected language
-  if (language == 'en') {
-
-    subjects %<>%
-      dplyr::mutate_(TEMNOME = ~ iconv(TEMNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(TEMNOME = ~ factor(TEMNOME,
-                                       levels = c('Producao', 'Consumo e vendas', 'Moeda e credito', 'Juros', 'Comercio exterior',
-                                                  'Financas publicas', 'Cambio', 'Contas nacionais', 'Precos', 'Balanco de pagamentos',
-                                                  'Economia internacional', 'Emprego', 'Salario e renda', 'Populacao', 'Indicadores sociais',
-                                                  'Projecoes', 'Sinopse macroeconomica', 'Eleicoes', 'Estoque de capital', 'Seguranca Publica',
-                                                  'Assistencia social', 'Correcao monetaria', 'Avaliacao do governo', 'Vendas',
-                                                  'Percepcao e expectativa', 'Agropecuaria', 'Educacao', 'Renda', 'Habitacao',
-                                                  'Geografico', 'Transporte', 'Demografia', 'Desenvolvimento humano', 'Financeiras',
-                                                  'Mercado de trabalho', 'Saude', 'Deputado Estadual', 'Deputado Federal', 'Governador',
-                                                  'Prefeito', 'Presidente', 'Senador', 'Vereador', 'Eleitorado', 'IDHm2010',
-                                                  'IDHm2000', 'IDHm1991', 'Contas Regionais'),
-                                       labels = c('Production', 'Consumption and sales', 'Currency and credit', 'Interest',
-                                                  'Foreign trade', 'public finances', 'Exchange', 'National Accounts',
-                                                  'Prices', 'Balance of payments', 'International economy', 'Employment',
-                                                  'Salary and income', 'Population', 'Social indicators', 'Projections',
-                                                  'Macroeconomic synopsis', 'Elections', 'Capital stock', 'Public security',
-                                                  'Social assistance', 'Monetary correction', 'Government evaluation', 'Sales',
-                                                  'Perception and expectation', 'Agriculture and animal husbandry', 'Education',
-                                                  'Income', 'Housing', 'Geographical', 'Transport', 'Demography', 'Human development',
-                                                  'Financial', 'Labor market', 'Health', 'State deputy', 'Federal deputy',
-                                                  'Governor', 'Mayor', 'President', 'Senator', 'Alderman', 'Electorate', 'mHDI2010',
-                                                  'mHDI2000', 'mHDI1991', 'Regional Accounts'))) %>%
-      purrr::set_names(c('scode', 'sname')) %>%
-      sjlabelled::set_label(c('Subject Code','Subject Name'))
-
+  
+  # Output NULL
+  subjects <- NULL
+  
+  # Test internet connection
+  if (curl::has_internet()) {
+    
+    Sys.sleep(.01)
+    tryCatch({
+      
+      ## Starting: Extract from JSON >
+      ##           Transform to tbl >
+      ##           Select variables >
+      ##           Sort by code >
+      ##           Transform in chr
+      subjects <-
+        data.frame(jsonlite::fromJSON(url, flatten = TRUE)[[2]]) %>%
+        dplyr::as_tibble() %>%
+        dplyr::select(.data$TEMCODIGO, .data$TEMNOME) %>%
+        dplyr::arrange(.data$TEMCODIGO) %>%
+        dplyr::mutate(TEMNOME = as.character(.data$TEMNOME))
+      
+    }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+    
+    # Setting labels in selected language
+    if (!is.null(subjects)) {
+      
+      # Setting labels in selected language
+      if (language == 'en') {
+        
+        subjects %<>%
+          dplyr::mutate(TEMNOME = iconv(.data$TEMNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+          dplyr::mutate(TEMNOME = factor(.data$TEMNOME,
+                                         levels = c('Producao', 'Consumo e vendas', 'Moeda e credito', 'Juros', 'Comercio exterior',
+                                                    'Financas publicas', 'Cambio', 'Contas nacionais', 'Precos', 'Balanco de pagamentos',
+                                                    'Economia internacional', 'Emprego', 'Salario e renda', 'Populacao', 'Indicadores sociais',
+                                                    'Projecoes', 'Sinopse macroeconomica', 'Eleicoes', 'Estoque de capital', 'Seguranca Publica',
+                                                    'Assistencia social', 'Correcao monetaria', 'Avaliacao do governo', 'Vendas',
+                                                    'Percepcao e expectativa', 'Agropecuaria', 'Educacao', 'Renda', 'Habitacao',
+                                                    'Geografico', 'Transporte', 'Demografia', 'Desenvolvimento humano', 'Financeiras',
+                                                    'Mercado de trabalho', 'Saude', 'Deputado Estadual', 'Deputado Federal', 'Governador',
+                                                    'Prefeito', 'Presidente', 'Senador', 'Vereador', 'Eleitorado', 'IDHm2010',
+                                                    'IDHm2000', 'IDHm1991', 'Contas Regionais', 'COVID19'),
+                                         labels = c('Production', 'Consumption and sales', 'Currency and credit', 'Interest',
+                                                    'Foreign trade', 'public finances', 'Exchange', 'National Accounts',
+                                                    'Prices', 'Balance of payments', 'International economy', 'Employment',
+                                                    'Salary and income', 'Population', 'Social indicators', 'Projections',
+                                                    'Macroeconomic synopsis', 'Elections', 'Capital stock', 'Public security',
+                                                    'Social assistance', 'Monetary correction', 'Government evaluation', 'Sales',
+                                                    'Perception and expectation', 'Agriculture and animal husbandry', 'Education',
+                                                    'Income', 'Housing', 'Geographical', 'Transport', 'Demography', 'Human development',
+                                                    'Financial', 'Labor market', 'Health', 'State deputy', 'Federal deputy',
+                                                    'Governor', 'Mayor', 'President', 'Senator', 'Alderman', 'Electorate', 'mHDI2010',
+                                                    'mHDI2000', 'mHDI1991', 'Regional Accounts', 'COVID19'))) %>%
+          purrr::set_names(c('scode', 'sname')) %>%
+          sjlabelled::set_label(c('Subject Code','Subject Name'))
+        
+      } else {
+        
+        subjects %<>%
+          dplyr::mutate(TEMNOME = factor(.data$TEMNOME)) %>%
+          purrr::set_names(c('scode', 'sname')) %>%
+          sjlabelled::set_label(c('Codigo do Tema','Nome do Tema'))
+        
+      }
+      
+    }
+    
   } else {
-
-    subjects %<>%
-      dplyr::mutate_(TEMNOME = ~ factor(TEMNOME)) %>%
-      purrr::set_names(c('scode', 'sname')) %>%
-      sjlabelled::set_label(c('Codigo do Tema','Nome do Tema'))
-
+    message("The internet connection is unavailable.")
   }
 
   subjects
@@ -192,7 +235,7 @@ available_subjects <- function(language = c("en", "br")) {
 #' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
-#' @return A data frame containing ISO 3 code and name of available countries.
+#' @return A data frame containing 3-letter country code and name of available countries.
 #' 
 #' @examples
 #' # Available countries
@@ -207,61 +250,80 @@ available_countries <- function(language = c("en", "br")) {
 
   # URL for countries
   url <- 'http://www.ipeadata.gov.br/api/odata4/Paises/'
-
-  ## Starting: Extract from JSON >
-  ##           Transform to tbl >
-  ##           Sort by code >
-
-  countries <-
-    jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
-    dplyr::as_tibble() %>%
-    dplyr::arrange_(.dots = c('PAICODIGO'))
-
-  # Setting labels in selected language
-  if (language == 'en') {
-
-    countries %<>%
-      dplyr::mutate_(PAINOME = ~ iconv(PAINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(PAINOME = ~ factor(PAINOME,
-                                       levels = c('Angola', 'Emirados Arabes Unidos', 'Argentina', 'Sudeste Asiatico', 'Australia',
-                                                  'Austria', 'Belgica', 'Bahamas', 'Bolivia', 'Brasil', 'Canada', 'Suica', 'Chile',
-                                                  'China', 'Congo', 'Colombia', 'Cabo Verde', 'Republica Tcheca', 'Alemanha',
-                                                  'Dinamarca', 'Republica Dominicana', 'Argelia', 'Equador', 'Egito', 'Espanha',
-                                                  'Uniao Europeia', 'Finlandia', 'Franca', 'Gra-Bretanha (Reino Unido, UK)',
-                                                  'Guine-Bissau', 'Grecia', 'Hong Kong', 'Haiti', 'Hungria', 'Indonesia',
-                                                  'India', 'Paises industrializados', 'Irlanda', 'Ira', 'Iraque', 'Islandia',
-                                                  'Israel', 'Italia', 'Japao', 'Coreia do Sul', 'America Latina', 'Santa Lucia',
-                                                  'Luxemburgo', 'Macau', 'Marrocos', 'Mexico', 'Myanma (Ex-Burma)', 'Mocambique',
-                                                  'Malasia', 'Nigeria', 'Holanda', 'Noruega', 'Nova Zelandia', 'Peru', 'Filipinas',
-                                                  'Polonia', 'Portugal', 'Paraguai', 'Qatar', 'Leste Europeu e Russia', 'Romenia',
-                                                  'Federacao Russa', 'Arabia Saudita', 'Cingapura', 'Sao Tome e Principe', 'Eslovenia',
-                                                  'Suecia', 'Tailandia', 'Timor Leste (Ex-East Timor)', 'Trinidad and Tobago', 'Taiwan',
-                                                  'Paises em desenvolvimento', 'Uruguai', 'Estados Unidos', 'Venezuela', 'Mundial',
-                                                  'Iemen', 'Africa do Sul', 'Zona do Euro'),
-                                       labels = c('Angola', 'United Arab Emirates', 'Argentina', 'Southeast Asia', 'Australia', 'Austria',
-                                                  'Belgium', 'Bahamas', 'Bolivia', 'Brazil', 'Canada', 'Switzerland', 'Chile',
-                                                  'China', 'Congo', 'Colombia', 'Cape Verde', 'Czech republic', 'Germany',
-                                                  'Denmark', 'Dominican Republic', 'Algeria', 'Ecuador', 'Egypt', 'Spain',
-                                                  'European Union', 'Finland', 'France', 'Great Britain (United Kingdom, UK)', 'Guinea Bissau',
-                                                  'Greece', 'Hong Kong', 'Haiti', 'Hungary', 'Indonesia', 'India', 'Developed countries',
-                                                  'Ireland', 'Iran', 'Iraq', 'Iceland', 'Israel', 'Italy', 'Japan', 'South Korea',
-                                                  'Latin America', 'Saint Lucia', 'Luxembourg', 'Macao', 'Morocco', 'Mexico', 'Myanmar',
-                                                  'Mozambique', 'Malaysia', 'Nigeria', 'Netherlands', 'Norway', 'New Zealand', 'Peru',
-                                                  'Philippines', 'Poland', 'Portugal', 'Paraguay', 'Qatar', 'Eastern Europe and Russia',
-                                                  'Romania', 'Russian Federation', 'Saudi Arabia', 'Singapore', 'Sao Tome and Principe',
-                                                  'Slovenia', 'Sweden', 'Thailand', 'East Timor', 'Trinidad and Tobago', 'Taiwan',
-                                                  'Developing countries', 'Uruguay','United States of America', 'Venezuela', 'World',
-                                                  'Yemen', 'South Africa', 'Euro Area'))) %>%
-      dplyr::mutate_(PAINOME = ~ as.character(PAINOME)) %>%
-      purrr::set_names(c('tcode', 'tname')) %>%
-      sjlabelled::set_label(c('Country Code (ISO 3)','Country Name'))
-
+  
+  # Output NULL
+  countries <- NULL
+  
+  # Test internet connection
+  if (curl::has_internet()) {
+    
+    Sys.sleep(.01)
+    tryCatch({
+      
+      ## Starting: Extract from JSON >
+      ##           Transform to tbl >
+      ##           Sort by code
+      countries <-
+        jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
+        dplyr::as_tibble() %>%
+        dplyr::arrange(.data$PAICODIGO)
+      
+    }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+    
+    # Setting labels in selected language
+    if (!is.null(countries)) {
+      
+      # Setting labels in selected language
+      if (language == 'en') {
+        
+        countries %<>%
+          dplyr::mutate(PAINOME = iconv(.data$PAINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+          dplyr::mutate(PAINOME = factor(.data$PAINOME,
+                                         levels = c('Angola', 'Emirados Arabes Unidos', 'Argentina', 'Sudeste Asiatico', 'Australia',
+                                                    'Austria', 'Belgica', 'Bahamas', 'Bolivia', 'Brasil', 'Canada', 'Suica', 'Chile',
+                                                    'China', 'Congo', 'Colombia', 'Cabo Verde', 'Republica Tcheca', 'Alemanha',
+                                                    'Dinamarca', 'Republica Dominicana', 'Argelia', 'Equador', 'Egito', 'Espanha',
+                                                    'Uniao Europeia', 'Finlandia', 'Franca', 'Gra-Bretanha (Reino Unido, UK)',
+                                                    'Guine-Bissau', 'Grecia', 'Hong Kong', 'Haiti', 'Hungria', 'Indonesia',
+                                                    'India', 'Paises industrializados', 'Irlanda', 'Ira', 'Iraque', 'Islandia',
+                                                    'Israel', 'Italia', 'Japao', 'Coreia do Sul', 'America Latina', 'Santa Lucia',
+                                                    'Luxemburgo', 'Macau', 'Marrocos', 'Mexico', 'Myanma (Ex-Burma)', 'Mocambique',
+                                                    'Malasia', 'Nigeria', 'Holanda', 'Noruega', 'Nova Zelandia', 'Peru', 'Filipinas',
+                                                    'Polonia', 'Portugal', 'Paraguai', 'Qatar', 'Leste Europeu e Russia', 'Romenia',
+                                                    'Federacao Russa', 'Arabia Saudita', 'Cingapura', 'Sao Tome e Principe', 'Eslovenia',
+                                                    'Suecia', 'Tailandia', 'Timor Leste (Ex-East Timor)', 'Trinidad and Tobago', 'Taiwan',
+                                                    'Paises em desenvolvimento', 'Uruguai', 'Estados Unidos', 'Venezuela', 'Mundial',
+                                                    'Iemen', 'Africa do Sul', 'Zona do Euro'),
+                                         labels = c('Angola', 'United Arab Emirates', 'Argentina', 'Southeast Asia', 'Australia', 'Austria',
+                                                    'Belgium', 'Bahamas', 'Bolivia', 'Brazil', 'Canada', 'Switzerland', 'Chile',
+                                                    'China', 'Congo', 'Colombia', 'Cape Verde', 'Czech republic', 'Germany',
+                                                    'Denmark', 'Dominican Republic', 'Algeria', 'Ecuador', 'Egypt', 'Spain',
+                                                    'European Union', 'Finland', 'France', 'Great Britain (United Kingdom, UK)', 'Guinea Bissau',
+                                                    'Greece', 'Hong Kong', 'Haiti', 'Hungary', 'Indonesia', 'India', 'Developed countries',
+                                                    'Ireland', 'Iran', 'Iraq', 'Iceland', 'Israel', 'Italy', 'Japan', 'South Korea',
+                                                    'Latin America', 'Saint Lucia', 'Luxembourg', 'Macao', 'Morocco', 'Mexico', 'Myanmar',
+                                                    'Mozambique', 'Malaysia', 'Nigeria', 'Netherlands', 'Norway', 'New Zealand', 'Peru',
+                                                    'Philippines', 'Poland', 'Portugal', 'Paraguay', 'Qatar', 'Eastern Europe and Russia',
+                                                    'Romania', 'Russian Federation', 'Saudi Arabia', 'Singapore', 'Sao Tome and Principe',
+                                                    'Slovenia', 'Sweden', 'Thailand', 'East Timor', 'Trinidad and Tobago', 'Taiwan',
+                                                    'Developing countries', 'Uruguay','United States of America', 'Venezuela', 'World',
+                                                    'Yemen', 'South Africa', 'Euro Area'))) %>%
+          dplyr::mutate(PAINOME = as.character(.data$PAINOME)) %>%
+          purrr::set_names(c('tcode', 'tname')) %>%
+          sjlabelled::set_label(c('Country Code','Country Name'))
+        
+      } else {
+        
+        countries %<>%
+          purrr::set_names(c('tcode', 'tname')) %>%
+          sjlabelled::set_label(c('Codigo do Pais','Nome do Pais'))
+        
+      }
+      
+    }
+    
   } else {
-
-    countries %<>%
-      purrr::set_names(c('tcode', 'tname')) %>%
-      sjlabelled::set_label(c('Codigo do Pais (ISO 3)','Nome do Pais'))
-
+    message("The internet connection is unavailable.")
   }
 
   countries
@@ -291,67 +353,86 @@ available_territories <- function(language = c("en", "br")) {
 
   # URL for territories
   url <- 'http://www.ipeadata.gov.br/api/odata4/Territorios/'
-
-  ## Starting: Extract from JSON >
-  ##           Transform to tbl >
-  ##           Select variables >
-  ##           Remove NA >
-  ##           Sort by uname >
-  ##           Rename variables >
-  ##           Add subtitles
-
-  territories <-
-    jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
-    dplyr::as_tibble() %>%
-    dplyr::select_(.dots = c('NIVNOME', 'TERCODIGO', 'TERNOME', 'TERAREA')) %>%
-    dplyr::filter_(~ !is.na(TERAREA)) %>%
-    dplyr::arrange_(.dots = c('TERCODIGO'))
-
-  # Setting labels in selected language
-  if (language == 'en') {
-
-    territories %<>%
-      dplyr::mutate_(NIVNOME = ~ iconv(NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
-                                       levels = c('Brasil', 'Regioes', 'Estados', 'Mesorregioes', 'Microrregioes',
-                                                   'Estado/RM', 'Area metropolitana', 'Municipios',
-                                                  'AMC 91-00', 'AMC 70-00', 'AMC 60-00', 'AMC 40-00',
-                                                  'AMC 20-00', 'AMC 1872-00'),
-                                       labels = c('Brazil', 'Regions', 'States', 'Mesoregions', 'Microregions',
-                                                  'State/Metropolitan region', 'Metropolitan area', 'Municipality',
-                                                  'MCA 91-00', 'MCA 70-00', 'MCA 60-00', 'MCA 40-00',
-                                                  'MCA 20-00', 'MCA 1872-00'), ordered = TRUE)) %>%
-      dplyr::arrange_(.dots = c('NIVNOME')) %>%
-      purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
-      sjlabelled::set_label(c('Territorial Unit Name',
-                              'Territorial Code','Territorial Name','Area (Km2)'))
-
+  
+  # Output NULL
+  territories <- NULL
+  
+  # Test internet connection
+  if (curl::has_internet()) {
+    
+    Sys.sleep(.01)
+    tryCatch({
+      
+      ## Starting: Extract from JSON >
+      ##           Transform to tbl >
+      ##           Select variables >
+      ##           Remove NA >
+      ##           Sort by uname >
+      ##           Rename variables >
+      ##           Add subtitles
+      territories <-
+        jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
+        dplyr::as_tibble() %>%
+        dplyr::select(.data$NIVNOME, .data$TERCODIGO, .data$TERNOME, .data$TERAREA) %>%
+        dplyr::filter(!is.na(.data$TERAREA)) %>%
+        dplyr::arrange(.data$TERCODIGO)
+      
+    }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+    
+    # Setting labels in selected language
+    if (!is.null(territories)) {
+      
+      # Setting labels in selected language
+      if (language == 'en') {
+        
+        territories %<>%
+          dplyr::mutate(NIVNOME = iconv(.data$NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+          dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
+                                         levels = c('Brasil', 'Regioes', 'Estados', 'Mesorregioes', 'Microrregioes',
+                                                    'Estado/RM', 'Area metropolitana', 'Municipios',
+                                                    'AMC 91-00', 'AMC 70-00', 'AMC 60-00', 'AMC 40-00',
+                                                    'AMC 20-00', 'AMC 1872-00'),
+                                         labels = c('Brazil', 'Regions', 'States', 'Mesoregions', 'Microregions',
+                                                    'State/Metropolitan region', 'Metropolitan area', 'Municipality',
+                                                    'MCA 91-00', 'MCA 70-00', 'MCA 60-00', 'MCA 40-00',
+                                                    'MCA 20-00', 'MCA 1872-00'), ordered = TRUE)) %>%
+          dplyr::arrange(.data$NIVNOME) %>%
+          purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
+          sjlabelled::set_label(c('Territorial Unit Name',
+                                  'Territorial Code','Territorial Name','Area (Km2)'))
+        
+      } else {
+        
+        territories %<>%
+          dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
+                                         levels = levels(factor(.data$NIVNOME))[ c(
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == ''),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Brasil'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Regioes'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estados'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Mesorregioes'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Microrregioes'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estado/RM'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Area metropolitana'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Municipios'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 91-00'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 70-00'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 60-00'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 40-00'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 20-00'),
+                                           which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 1872-00')
+                                         )], ordered = TRUE)) %>%
+          dplyr::arrange(.data$NIVNOME) %>%
+          purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
+          sjlabelled::set_label(c('Nome da Unidade Territorial',
+                                  'Codigo Territorial','Nome do Territorio','Area (Km2)'))
+        
+      }
+      
+    }
+    
   } else {
-
-    territories %<>%
-      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
-                                       levels = levels(factor(NIVNOME))[ c(
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == ''),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Brasil'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Regioes'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estados'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Mesorregioes'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Microrregioes'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estado/RM'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Area metropolitana'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Municipios'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 91-00'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 70-00'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 60-00'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 40-00'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 20-00'),
-                                                                           which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 1872-00')
-                                                                      )], ordered = TRUE)) %>%
-      dplyr::arrange_(.dots = c('NIVNOME')) %>%
-      purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
-      sjlabelled::set_label(c('Nome da Unidade Territorial',
-                              'Codigo Territorial','Nome do Territorio','Area (Km2)'))
-
+    message("The internet connection is unavailable.")
   }
 
   territories
@@ -408,66 +489,84 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   }
   update.step <- max(2, floor(length(code)/100))
 
-  # Retrieve metadata 1 by 1
-  for (i in 1:length(code)) {
-
-    # Check
-    code0 <- gsub(" ", "_", toupper(code[i]))
-
-    # URL for metadata
-    url <- paste0("http://www.ipeadata.gov.br/api/odata4/Metadados('", code0,"')")
-
-    # Extract from JSON
-    metadata.aux <- jsonlite::fromJSON(url, flatten = TRUE)[[2]]
-
-    if (length(metadata.aux) > 0) {
-
-      ## Starting: Transform to tbl >
-      ##           Select variables >
-      metadata.aux %<>%
-        dplyr::as_tibble() %>%
-        dplyr::select_(.dots = c('-SERNUMERICA'))
-
-      # Concatenate rows
-      metadata <- rbind(metadata,metadata.aux)
-    } else {
-      warning(paste0("code '", code[i], "' not found"))
-    }
-
-    # Progress Bar
-    if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
-      setTxtProgressBar(pb, i)
-    }
+  # Test internet connection
+  if (curl::has_internet()) {
+    
+    Sys.sleep(.01)
+    tryCatch({
+      
+      # Retrieve metadata 1 by 1
+      for (i in 1:length(code)) {
+        
+        # Check
+        code0 <- gsub(" ", "_", toupper(code[i]))
+        
+        # URL for metadata
+        url <- paste0("http://www.ipeadata.gov.br/api/odata4/Metadados('", code0,"')")
+        
+        # Extract from JSON
+        Sys.sleep(.01)
+        metadata.aux <- jsonlite::fromJSON(url, flatten = TRUE)[[2]]
+        
+        if (length(metadata.aux) > 0) {
+          
+          ## Starting: Transform to tbl >
+          ##           Select variables
+          metadata.aux %<>%
+            dplyr::as_tibble() %>%
+            dplyr::select(- .data$SERNUMERICA)
+          
+          # Concatenate rows
+          metadata <- rbind(metadata, metadata.aux)
+          
+        } else {
+          
+          warning(paste0("code '", code[i], "' not found"))
+          
+        }
+        
+        # Progress Bar
+        if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
+          setTxtProgressBar(pb, i)
+        }
+      }
+      
+    }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+    
+  } else {
+    message("The internet connection is unavailable.")
   }
-
+  
   # Progress Bar closes
   if (!quiet & (length(code) >= 2)) {
     close(pb)
   }
-
-  ## Starting: Transform in date >
-  ##           Transform in factor >
-  ##           Transform in factor >
-  ##           Transform in chr >
-  ##           Replace missing status >
-
-  metadata %<>%
-    dplyr::mutate_(SERATUALIZACAO = ~ lubridate::as_date(SERATUALIZACAO)) %>%
-    dplyr::mutate_(FNTSIGLA = ~ as.factor(FNTSIGLA)) %>%
-    dplyr::mutate_(FNTNOME = ~ as.factor(FNTNOME)) %>%
-    dplyr::mutate_(SERSTATUS = ~ as.character(SERSTATUS)) %>%
-    dplyr::mutate_(SERSTATUS = ~ dplyr::if_else(is.na(SERSTATUS), '', SERSTATUS))
-
+  
   # Setting labels in selected language
-  if (language == 'en') {
-
+  if (nrow(metadata) != 0) {
+    
+    ## Starting: Transform in date >
+    ##           Transform in factor >
+    ##           Transform in factor >
+    ##           Transform in chr >
+    ##           Replace missing status
     metadata %<>%
-      dplyr::mutate_(BASNOME = ~ iconv(BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(BASNOME = ~ factor(BASNOME,
+      dplyr::mutate(SERATUALIZACAO = lubridate::as_date(.data$SERATUALIZACAO)) %>%
+      dplyr::mutate(FNTSIGLA = as.factor(.data$FNTSIGLA)) %>%
+      dplyr::mutate(FNTNOME = as.factor(.data$FNTNOME)) %>%
+      dplyr::mutate(SERSTATUS = as.character(.data$SERSTATUS)) %>%
+      dplyr::mutate(SERSTATUS = dplyr::if_else(is.na(.data$SERSTATUS), '', .data$SERSTATUS))
+    
+    # Setting labels in selected language
+    if (language == 'en') {
+      
+      metadata %<>%
+        dplyr::mutate(BASNOME = iconv(.data$BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+        dplyr::mutate(BASNOME = factor(.data$BASNOME,
                                        levels = c('Macroeconomico', 'Regional', 'Social'),
                                        labels = c('Macroeconomic', 'Regional', 'Social'))) %>%
-      dplyr::mutate_(UNINOME = ~ iconv(UNINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(UNINOME = ~ factor(UNINOME,
+        dplyr::mutate(UNINOME = iconv(.data$UNINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+        dplyr::mutate(UNINOME = factor(.data$UNINOME,
                                        levels = c("-", "Tonelada", "R$", "GWh", "US$", "Euro", "Unidade", "Metro cubico",
                                                   "Marco alemao", "Franco frances", "Franco frances", "Libra esterlina",
                                                   "Dolar canadense", "Florim holandes", "Franco belga", "Peso argentino",
@@ -534,53 +633,55 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                   "Pound sterling, constant prices of 1913", "(acronyms)", "Kg", "People", "Hour",
                                                   "US$ FOB", "Irish pound", "Escudo", "Polish zloty", "US$, constant prices of 2005",
                                                   "MWh", "toe", "Ratio/relation", "Quantity", "Real", "Basic salary", "Celsius Degree", "mm/month"))) %>%
-      dplyr::mutate_(PERNOME = ~ iconv(PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(PERNOME = ~ factor(PERNOME,
+        dplyr::mutate(PERNOME = iconv(.data$PERNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+        dplyr::mutate(PERNOME = factor(.data$PERNOME,
                                        levels = c('Anual', 'Decenal', 'Diaria', 'Irregular',
                                                   'Mensal', 'Quadrienal', 'Quinquenal',
                                                   'Semestral', 'Trimestral', 'Nao se aplica'),
                                        labels = c('Yearly', 'Decennial', 'Daily', 'Irregular',
                                                   'Monthly', 'Quadrennial', 'Quinquennial',
                                                   'Semiannual', 'Quarterly', 'Not applicable'))) %>%
-      dplyr::mutate_(MULNOME = ~ iconv(MULNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(MULNOME = ~ factor(MULNOME,
+        dplyr::mutate(MULNOME = iconv(.data$MULNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+        dplyr::mutate(MULNOME = factor(.data$MULNOME,
                                        levels =   c('mil', 'milhoes', 'bilhoes', 'centavos',
                                                     'milhares', 'trilhoes', 'centenas',
                                                     'centena de milhao'),
                                        labels = c( 'Thousand', 'Millions', 'Billions', 'Cents',
                                                    'Thousands', 'Trillions', 'Hundreds',
                                                    'Hundred million'))) %>%
-      dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
+        dplyr::mutate(SERSTATUS = factor(.data$SERSTATUS,
                                          levels = c('A', 'I', ''),
                                          labels = c('Active', 'Inactive', ''))) %>%
-      purrr::set_names(c('code', 'name', 'comment', 'lastupdate', 'bname', 'source', 'sourcename',
-                         'sourceurl', 'freq', 'unity', 'mf', 'status',
-                         'scode', 'tcode')) %>%
-      sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Comment (PT-BR)', 'Last Update',
-                              'Theme name', 'Source', 'Source Name', 'Source URL',
-                              'Frequency', 'Unity', 'Multiplier Factor', 'Status',
-                              'Subject Code', 'Country or Territorial Code'))
-
-  } else {
-
-    metadata %<>%
-      dplyr::mutate_(BASNOME = ~ factor(BASNOME)) %>%
-      dplyr::mutate_(UNINOME = ~ factor(UNINOME)) %>%
-      dplyr::mutate_(PERNOME = ~ factor(PERNOME)) %>%
-      dplyr::mutate_(MULNOME = ~ factor(MULNOME)) %>%
-      dplyr::mutate_(SERSTATUS = ~ factor(SERSTATUS,
+        purrr::set_names(c('code', 'name', 'comment', 'lastupdate', 'bname', 'source', 'sourcename',
+                           'sourceurl', 'freq', 'unity', 'mf', 'status',
+                           'scode', 'tcode')) %>%
+        sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Comment (PT-BR)', 'Last Update',
+                                'Theme name', 'Source', 'Source Name', 'Source URL',
+                                'Frequency', 'Unity', 'Multiplier Factor', 'Status',
+                                'Subject Code', 'Country or Territorial Code'))
+      
+    } else {
+      
+      metadata %<>%
+        dplyr::mutate(BASNOME = factor(.data$BASNOME)) %>%
+        dplyr::mutate(UNINOME = factor(.data$UNINOME)) %>%
+        dplyr::mutate(PERNOME = factor(.data$PERNOME)) %>%
+        dplyr::mutate(MULNOME = factor(.data$MULNOME)) %>%
+        dplyr::mutate(SERSTATUS = factor(.data$SERSTATUS,
                                          levels = c('A', 'I', ''),
                                          labels = c('Ativa', 'Inativa', ''))) %>%
-      purrr::set_names(c('code', 'name', 'comment', 'lastupdate', 'bname', 'source', 'sourcename',
-                         'sourceurl', 'freq', 'unity', 'mf', 'status',
-                         'scode', 'tcode')) %>%
-      sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie (PT-BR)', 'Comentario', 'Ultima Atualizacao',
-                              'Nome da Base', 'Fonte', 'Nome da Fonte', 'URL da Fonte',
-                              'Frequencia', 'Unidade', 'Fator Multiplicador', 'Status',
-                              'Codigo do Tema', 'Codigo de Pais ou Territorial'))
-
+        purrr::set_names(c('code', 'name', 'comment', 'lastupdate', 'bname', 'source', 'sourcename',
+                           'sourceurl', 'freq', 'unity', 'mf', 'status',
+                           'scode', 'tcode')) %>%
+        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie (PT-BR)', 'Comentario', 'Ultima Atualizacao',
+                                'Nome da Base', 'Fonte', 'Nome da Fonte', 'URL da Fonte',
+                                'Frequencia', 'Unidade', 'Fator Multiplicador', 'Status',
+                                'Codigo do Tema', 'Codigo de Pais ou Territorial'))
+      
+    }
+    
   }
-
+  
   metadata
 }
 
@@ -631,59 +732,78 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
     pb <- txtProgressBar(min = 0, max = length(code), style = 3)
   }
   update.step <- max(2, floor(length(code)/100))
-
-  # Retrieve metadata 1 by 1
-  for (i in 1:length(code)){
-
-    # Check
-    code0 <- gsub(" ", "_", toupper(code[i]))
-
-    # URL for metadata
-    url <- paste0("http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='", code0, "')")
-
-    # Extract from JSON
-    values.aux <- dplyr::as_tibble(jsonlite::fromJSON(url, flatten = TRUE)[[2]])
-
-    if (length(values.aux) > 0) {
-
-      # Sorting by ccode and date
-      values.aux %<>%
-        dplyr::mutate_(TERCODIGO = ~ as.integer(TERCODIGO)) %>%
-        dplyr::mutate_(NIVNOME = ~ as.factor(NIVNOME)) %>%
-        dplyr::mutate_(VALDATA = ~ lubridate::as_date(VALDATA)) %>%
-        dplyr::arrange_(.dots = c('TERCODIGO', 'VALDATA'))
-
-      # Concatenate rows
-      values <- rbind(values, values.aux)
-    } else {
-      warning(paste0("code '", code[i], "' not found"))
-    }
-
-    # Progress Bar
-    if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
-      setTxtProgressBar(pb, i)
-    }
+  
+  # Test internet connection
+  if (curl::has_internet()) {
+    
+    Sys.sleep(.01)
+    tryCatch({
+      
+      # Retrieve metadata 1 by 1
+      for (i in 1:length(code)){
+        
+        # Check
+        code0 <- gsub(" ", "_", toupper(code[i]))
+        
+        # URL for metadata
+        url <- paste0("http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='", code0, "')")
+        
+        # Extract from JSON
+        Sys.sleep(.01)
+        values.aux <- dplyr::as_tibble(jsonlite::fromJSON(url, flatten = TRUE)[[2]])
+        
+        if (length(values.aux) > 0) {
+          
+          # Sorting by ccode and date
+          values.aux %<>%
+            dplyr::mutate(TERCODIGO = as.integer(.data$TERCODIGO)) %>%
+            dplyr::mutate(NIVNOME = as.factor(.data$NIVNOME)) %>%
+            dplyr::mutate(VALDATA = lubridate::as_date(.data$VALDATA)) %>%
+            dplyr::arrange(.data$TERCODIGO, .data$VALDATA)
+          
+          # Concatenate rows
+          values <- rbind(values, values.aux)
+          
+        } else {
+          
+          warning(paste0("code '", code[i], "' not found"))
+          
+        }
+        
+        # Progress Bar
+        if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
+          setTxtProgressBar(pb, i)
+        }
+      }
+      
+    }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
+    
+  } else {
+    message("The internet connection is unavailable.")
   }
 
   # Progress Bar closes
   if (!quiet & (length(code) >= 2)) {
     close(pb)
   }
-
-  ## Starting: Remove NA >
-  ##           Rename variables >
-  ##           Add subtitles >
-  ##           Remove duplicates
-  values %<>%
-    dplyr::filter_(~ !is.na(VALVALOR)) %>%
-    dplyr::distinct()
-
+  
   # Setting labels in selected language
-  if (language == 'en') {
-
+  if (nrow(values) != 0) {
+    
+    ## Starting: Remove NA >
+    ##           Rename variables >
+    ##           Add subtitles >
+    ##           Remove duplicates
     values %<>%
-      dplyr::mutate_(NIVNOME = ~ iconv(NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
-      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
+      dplyr::filter(!is.na(.data$VALVALOR)) %>%
+      dplyr::distinct()
+    
+    # Setting labels in selected language
+    if (language == 'en') {
+      
+      values %<>%
+        dplyr::mutate(NIVNOME = iconv(.data$NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
+        dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
                                        levels = c('Brasil', 'Regioes', 'Estados', 'Mesorregioes', 'Microrregioes',
                                                   'Estado/RM', 'Area metropolitana', 'Municipios',
                                                   'AMC 91-00', 'AMC 70-00', 'AMC 60-00', 'AMC 40-00',
@@ -692,39 +812,40 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                                   'State/Metropolitan region', 'Metropolitan area', 'Municipality',
                                                   'MCA 91-00', 'MCA 70-00', 'MCA 60-00', 'MCA 40-00',
                                                   'MCA 20-00', 'MCA 1872-00', ''), ordered = TRUE)) %>%
-      purrr::set_names(c('code', 'date', 'value', 'uname', 'tcode')) %>%
-      sjlabelled::set_label(c('Ipeadata Code', 'Date', 'Value',
-                              'Territorial Unit Name',
-                              'Country or Territorial Code'))
-
-  } else {
-
-    values %<>%
-      dplyr::mutate_(NIVNOME = ~ factor(NIVNOME,
-                                       levels = levels(factor(NIVNOME))[ c(
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == ''),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Brasil'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Regioes'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estados'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Mesorregioes'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Microrregioes'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estado/RM'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Area metropolitana'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Municipios'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 91-00'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 70-00'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 60-00'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 40-00'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 20-00'),
-                                         which(iconv(levels(factor(NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 1872-00')
+        purrr::set_names(c('code', 'date', 'value', 'uname', 'tcode')) %>%
+        sjlabelled::set_label(c('Ipeadata Code', 'Date', 'Value',
+                                'Territorial Unit Name',
+                                'Country or Territorial Code'))
+      
+    } else {
+      
+      values %<>%
+        dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
+                                       levels = levels(factor(.data$NIVNOME))[ c(
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == ''),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Brasil'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Regioes'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estados'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Mesorregioes'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Microrregioes'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Estado/RM'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Area metropolitana'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'Municipios'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 91-00'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 70-00'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 60-00'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 40-00'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 20-00'),
+                                         which(iconv(levels(factor(.data$NIVNOME)), 'UTF-8', 'ASCII//TRANSLIT') == 'AMC 1872-00')
                                        )], ordered = TRUE)) %>%
-      purrr::set_names(c('code', 'date', 'value', 'uname', 'tcode')) %>%
-      sjlabelled::set_label(c('Codigo Ipeadata', 'Data', 'Valor',
-                              'Nome da Unidade Territorial',
-                              'Codigo de Pais ou Territorial'))
-
+        purrr::set_names(c('code', 'date', 'value', 'uname', 'tcode')) %>%
+        sjlabelled::set_label(c('Codigo Ipeadata', 'Data', 'Valor',
+                                'Nome da Unidade Territorial',
+                                'Codigo de Pais ou Territorial'))
+      
+    }
   }
-
+  
   values
 }
 

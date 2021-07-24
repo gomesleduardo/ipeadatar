@@ -11,7 +11,7 @@ available_countries(language = c("en", "br"))
 English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 }
 \value{
-A data frame containing ISO 3 code and name of available countries.
+A data frame containing 3-letter country code and name of available countries.
 }
 \description{
 Returns a list with available countries from Ipeadata API database.
