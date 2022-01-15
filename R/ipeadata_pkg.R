@@ -8,8 +8,8 @@
 # ------------------------------------------------------------------ #
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
-# |   Version: 0.1.4                                               | #
-# |   July 24, 2021                                                | #
+# |   Version: 0.1.5                                               | #
+# |   January 15, 2022                                             | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -236,10 +236,6 @@ available_subjects <- function(language = c("en", "br")) {
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing 3-letter country code and name of available countries.
-#' 
-#' @examples
-#' # Available countries
-#' all_countries <- available_countries()
 #'
 #' @export
 
