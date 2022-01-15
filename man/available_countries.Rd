@@ -16,8 +16,3 @@ A data frame containing 3-letter country code and name of available countries.
 \description{
 Returns a list with available countries from Ipeadata API database.
 }
-\examples{
-# Available countries
-all_countries <- available_countries()
-
-}
