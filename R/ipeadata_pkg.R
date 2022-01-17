@@ -9,7 +9,7 @@
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
 # |   Version: 0.1.5                                               | #
-# |   January 15, 2022                                             | #
+# |   January 17, 2022                                             | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -135,10 +135,6 @@ available_series <- function(language = c("en", "br")) {
 #' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
 #'
 #' @return A data frame containing code and name of available subjects.
-#'
-#' @examples
-#' # Available subjects
-#' all_subjects <- available_subjects()
 #'
 #' @export
 

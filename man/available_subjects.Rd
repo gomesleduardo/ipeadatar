@@ -16,8 +16,3 @@ A data frame containing code and name of available subjects.
 \description{
 Returns a list with available subjects from Ipeadata API database.
 }
-\examples{
-# Available subjects
-all_subjects <- available_subjects()
-
-}
