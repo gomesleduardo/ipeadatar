@@ -24,12 +24,6 @@ Returns a list with available database about the requested series.
 \note{
 The Ipeadata codes may be required by \code{available_series()}.
 }
-\examples{
-# Data from
-# "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
-dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
-
-}
 \references{
 This R package uses the Ipeadata API.
 For more information go to \url{http://www.ipeadata.gov.br/}.
