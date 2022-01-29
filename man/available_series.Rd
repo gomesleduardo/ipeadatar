@@ -8,7 +8,7 @@ available_series(language = c("en", "br"))
 }
 \arguments{
 \item{language}{String specifying the selected language. Language options are
-English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
+English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 }
 \value{
 A data frame containing Ipeadata code, name, theme, source,

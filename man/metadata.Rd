@@ -10,7 +10,7 @@ metadata(code, language = c("en", "br"), quiet = FALSE)
 \item{code}{A character vector with Ipeadata code.}
 
 \item{language}{String specifying the selected language. Language options are
-English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
+English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 
 \item{quiet}{Logical. If \code{FALSE} (default), a progress bar is shown.}
 }
@@ -18,6 +18,11 @@ English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
 A data frame containing Ipeadata code, name, short comment, last update, theme name,
  source's name and full name, source's URL, frequency, unity, multiplier factor, status,
  subject code and the country or territorial code of requested series.
+ 
+ @examples
+# Metadata from
+# "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
+meta <- metadata(code = "PRECOS12_IPCA12")
 }
 \description{
 Returns a list with metadata information about the requested series.

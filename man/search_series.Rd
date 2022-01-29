@@ -12,7 +12,7 @@ search_series(terms = NULL, fields = c('name'), language = c("en", "br"))
 \item{fields}{A character vector with table fields where matches are sought. See 'Details'.}
 
 \item{language}{String specifying the selected language. Language options are
-English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
+English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 }
 \value{
 A data frame containing Ipeadata code, name, theme, source,

@@ -8,8 +8,8 @@
 # ------------------------------------------------------------------ #
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
-# |   Version: 0.1.5                                               | #
-# |   January 17, 2022                                             | #
+# |   Version: 0.1.6                                               | #
+# |   January 29, 2022                                             | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -21,7 +21,7 @@
 #' @usage available_series(language = c("en", "br"))
 #'
 #' @param language String specifying the selected language. Language options are
-#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
 #'
 #' @return A data frame containing Ipeadata code, name, theme, source,
 #' frequency, last update and activity status of available series.
@@ -132,7 +132,7 @@ available_series <- function(language = c("en", "br")) {
 #' @usage available_subjects(language = c("en", "br"))
 #'
 #' @param language String specifying the selected language. Language options are
-#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
 #'
 #' @return A data frame containing code and name of available subjects.
 #'
@@ -229,7 +229,7 @@ available_subjects <- function(language = c("en", "br")) {
 #' @usage available_countries(language = c("en", "br"))
 #'
 #' @param language String specifying the selected language. Language options are
-#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
 #'
 #' @return A data frame containing 3-letter country code and name of available countries.
 #'
@@ -331,7 +331,7 @@ available_countries <- function(language = c("en", "br")) {
 #' @usage available_territories(language = c("en", "br"))
 #'
 #' @param language String specifying the selected language. Language options are
-#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
 #'
 #' @return A data frame containing unit name, code, name and area (in km2)
 #'  of Brazilian territorial divisions.
@@ -440,12 +440,17 @@ available_territories <- function(language = c("en", "br")) {
 #'
 #' @param code A character vector with Ipeadata code.
 #' @param language String specifying the selected language. Language options are
-#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
 #' @param quiet Logical. If \code{FALSE} (default), a progress bar is shown.
 #'
 #' @return A data frame containing Ipeadata code, name, short comment, last update, theme name,
 #'  source's name and full name, source's URL, frequency, unity, multiplier factor, status,
 #'  subject code and the country or territorial code of requested series.
+#'  
+#'  @examples
+#' # Metadata from
+#' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
+#' meta <- metadata(code = "PRECOS12_IPCA12")
 #'
 #' @note The original language of the available series' names and the comments were preserved.
 #' The Ipeadata codes may be required by \code{available_series()}.
@@ -682,11 +687,16 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #'
 #' @param code A character vector with Ipeadata code.
 #' @param language String specifying the selected language. Language options are
-#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
 #' @param quiet Logical. If \code{FALSE} (default), a progress bar is shown.
 #'
 #' @return A data frame containing Ipeadata code, date, value, territorial unit name
 #' and country or territorial code of requested series.
+#' 
+#' @examples
+#' # Data from
+#' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
+#' dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
 #'
 #' @note The Ipeadata codes may be required by \code{available_series()}.
 #'
@@ -842,7 +852,7 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @param terms A character vector with search terms.
 #' @param fields A character vector with table fields where matches are sought. See 'Details'.
 #' @param language String specifying the selected language. Language options are
-#' English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).
+#' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
 #' 
 #' @details The \code{fields} options are \code{"code"}, \code{"name"}, \code{"theme"}, 
 #' \code{"source"}, \code{"freq"}, \code{"lastupdate"} and \code{"status"}.

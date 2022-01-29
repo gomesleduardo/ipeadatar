@@ -8,7 +8,7 @@ available_subjects(language = c("en", "br"))
 }
 \arguments{
 \item{language}{String specifying the selected language. Language options are
-English (\code{"en"}, default) and Brazilian portuguese (\code{"br"}).}
+English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 }
 \value{
 A data frame containing code and name of available subjects.
