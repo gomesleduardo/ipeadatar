@@ -25,9 +25,11 @@ Returns a list with available database about the requested series.
 The Ipeadata codes may be required by \code{available_series()}.
 }
 \examples{
+\dontrun{
 # Data from
-# "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
-dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
+# "PAN_RRPE": Average real income from effective main work, Brazil
+data <- ipeadata(code = "PAN_RRPE", language = "br")
+}
 
 }
 \references{

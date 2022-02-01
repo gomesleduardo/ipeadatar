@@ -9,7 +9,7 @@
 # ------------------------------------------------------------------ #
 # |   R package for Ipeadata API database                          | #
 # |   Version: 0.1.6                                               | #
-# |   January 29, 2022                                             | #
+# |   January 31, 2022                                             | #
 # ------------------------------------------------------------------ #
 
 # Available series ------------------------------------------------
@@ -447,10 +447,12 @@ available_territories <- function(language = c("en", "br")) {
 #'  source's name and full name, source's URL, frequency, unity, multiplier factor, status,
 #'  subject code and the country or territorial code of requested series.
 #'  
-#'  @examples
+#' @examples
+#' \dontrun{
 #' # Metadata from
 #' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
 #' meta <- metadata(code = "PRECOS12_IPCA12")
+#' }
 #'
 #' @note The original language of the available series' names and the comments were preserved.
 #' The Ipeadata codes may be required by \code{available_series()}.
@@ -693,10 +695,13 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @return A data frame containing Ipeadata code, date, value, territorial unit name
 #' and country or territorial code of requested series.
 #' 
+#'
 #' @examples
+#' \dontrun{
 #' # Data from
-#' # "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
-#' dataBR <- ipeadata(code = "PRECOS12_IPCA12", language = "br")
+#' # "PAN_RRPE": Average real income from effective main work, Brazil
+#' data <- ipeadata(code = "PAN_RRPE", language = "br")
+#' }
 #'
 #' @note The Ipeadata codes may be required by \code{available_series()}.
 #'

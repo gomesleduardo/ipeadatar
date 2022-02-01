@@ -18,11 +18,6 @@ English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 A data frame containing Ipeadata code, name, short comment, last update, theme name,
  source's name and full name, source's URL, frequency, unity, multiplier factor, status,
  subject code and the country or territorial code of requested series.
- 
- @examples
-# Metadata from
-# "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
-meta <- metadata(code = "PRECOS12_IPCA12")
 }
 \description{
 Returns a list with metadata information about the requested series.
@@ -30,6 +25,14 @@ Returns a list with metadata information about the requested series.
 \note{
 The original language of the available series' names and the comments were preserved.
 The Ipeadata codes may be required by \code{available_series()}.
+}
+\examples{
+\dontrun{
+# Metadata from
+# "PRECOS12_IPCA12": Extended National Consumer Price Index (IPCA), Brazil
+meta <- metadata(code = "PRECOS12_IPCA12")
+}
+
 }
 \references{
 This R package uses the Ipeadata API.
