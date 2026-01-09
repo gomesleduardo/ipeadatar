@@ -1,38 +1,47 @@
-# An R package for Ipeadata API database 
+# ipeadatar: An R Interface to the Ipeadata API
 
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ipeadatar)](https://CRAN.R-project.org/package=ipeadatar) [![CRAC\_Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ipeadatar)](https://CRAN.R-project.org/package=ipeadatar)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/ipeadatar)](https://CRAN.R-project.org/package=ipeadatar)
+[![CRAN_Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ipeadatar)](https://CRAN.R-project.org/package=ipeadatar)
 
 ## Introduction
 
-This R package is an easier alternative to use the dataset of Brazilian Institute for Applied Economic Research (Ipea). It allows directly access to the macroeconomic, financial and regional databases. This package helps you to find the series you're looking for without the need to go on the [Ipeadata website](http://ipeadata.gov.br/) to find it and downloading it. This is a pratical way to use the Ipea databases on R.
+The **ipeadatar** package provides a convenient interface to the
+Ipeadata API, maintained by the Brazilian Institute for Applied Economic
+Research (Ipea). It allows direct access to macroeconomic, financial,
+and regional time series without requiring manual downloads from the
+[Ipeadata website](https://www.ipeadata.gov.br/).
 
-## Instalation
+The package is designed to simplify the discovery, retrieval, and use of
+Ipeadata series within R, offering a practical and reproducible workflow
+for applied research and data analysis.
 
-### Via CRAN
+## Installation
+
+### From CRAN
+
 ```{r, eval = FALSE}
 install.packages("ipeadatar")
 ```
 
-### Via GitHub
+### Development version from GitHub
+
 ```{r, eval = FALSE}
 library(devtools)
 install_github("gomesleduardo/ipeadatar")
 ```
 
-## Functions list
+## Available functions
 
-  |       Functions       |                     Outputs                    |
-  |-----------------------|------------------------------------------------|
-  | available_countries   |  List with available countries                 |
-  | available_series      |  List with available series                    |
-  | available_subjects    |  List with available subjects                  |
-  | available_territories |  List with available territorial divisions     |
-  | ipeadata              |  Returns a database about the requested series |
-  | metadata              |  Returns a metadata about the requested series |
-  | search_series         |  List with searched series                     |
+| Function            | Description                           |
+|---------------------|---------------------------------------|
+| available_countries | List available countries              |
+| available_series    | List available series                 |
+| available_subjects  | List available subjects               |
+| ipeadata            | Retrieve data for selected series     |
+| metadata            | Retrieve metadata for selected series |
+| search_series       | Search for series by keywords         |
 
-## Help
+## Documentation
 
-For more details and examples, see [R Documentation](https://cran.r-project.org/web/packages/ipeadatar/ipeadatar.pdf).
-
-For a brief tutorial, visit this [vignette](https://gomesleduardo.000webhostapp.com/ipeadatar_tutorial.html).
+For full details and examples, see the package reference manual: [R
+Documentation](https://cran.r-project.org/web/packages/ipeadatar/ipeadatar.pdf).
