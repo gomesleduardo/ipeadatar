@@ -30,7 +30,7 @@
 #'
 #' @export
 #'
-#' @importFrom magrittr %<>% %>% 
+#' @importFrom magrittr %<>% %>%
 #' @importFrom rlang .data
 
 available_series <- function(language = c("en", "br")) {
@@ -40,16 +40,16 @@ available_series <- function(language = c("en", "br")) {
 
   # URL for metadata
   url <- 'http://www.ipeadata.gov.br/api/odata4/Metadados/'
-  
+
   # Output NULL
   series <- NULL
-  
+
   # Test internet connection
   if (curl::has_internet()) {
-    
+
     Sys.sleep(.01)
     tryCatch({
-      
+
       ## Starting: Extract from JSON >
       ##           Transform to tbl >
       ##           Select variables >
@@ -59,25 +59,25 @@ available_series <- function(language = c("en", "br")) {
       series <-
         jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
         dplyr::as_tibble() %>%
-        dplyr::select(.data$SERCODIGO, .data$SERNOME, .data$BASNOME, 
-                      .data$FNTSIGLA, .data$PERNOME, .data$SERATUALIZACAO, 
+        dplyr::select(.data$SERCODIGO, .data$SERNOME, .data$BASNOME,
+                      .data$FNTSIGLA, .data$PERNOME, .data$SERATUALIZACAO,
                       .data$SERSTATUS) %>%
-        dplyr::arrange(.data$BASNOME, .data$FNTSIGLA, 
+        dplyr::arrange(.data$BASNOME, .data$FNTSIGLA,
                        .data$PERNOME, .data$SERCODIGO) %>%
         dplyr::mutate(FNTSIGLA = as.factor(.data$FNTSIGLA)) %>%
         dplyr::mutate(SERATUALIZACAO = lubridate::as_date(.data$SERATUALIZACAO)) %>%
         dplyr::mutate(SERSTATUS = as.character(.data$SERSTATUS)) %>%
-        dplyr::mutate(SERSTATUS = dplyr::if_else(is.na(.data$SERSTATUS), 
-                                                 '', 
+        dplyr::mutate(SERSTATUS = dplyr::if_else(is.na(.data$SERSTATUS),
+                                                 '',
                                                  .data$SERSTATUS))
-      
+
     }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
-    
+
     # Setting labels in selected language
     if (!is.null(series)) {
-      
+
       if (language == 'en') {
-        
+
         series %<>%
           dplyr::mutate(SERSTATUS = factor(.data$SERSTATUS,
                                            levels = c('A', 'I', ''),
@@ -98,9 +98,9 @@ available_series <- function(language = c("en", "br")) {
                              'freq', 'lastupdate', 'status')) %>%
           sjlabelled::set_label(c('Ipeadata Code','Serie Name (PT-BR)', 'Theme',
                                   'Source', 'Frequency','Last Update','Status'))
-        
+
       } else {
-        
+
         series %<>%
           dplyr::mutate(SERSTATUS = factor(.data$SERSTATUS,
                                            levels = c('A', 'I', ''),
@@ -111,15 +111,15 @@ available_series <- function(language = c("en", "br")) {
                              'freq', 'lastupdate', 'status')) %>%
           sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
                                   'Frequencia','Ultima Atualizacao','Status'))
-        
+
       }
-      
+
     }
-    
+
   } else {
     message("The internet connection is unavailable.")
   }
-  
+
   series
 }
 
@@ -145,16 +145,16 @@ available_subjects <- function(language = c("en", "br")) {
 
   # URL for themes
   url <- 'http://www.ipeadata.gov.br/api/odata4/Temas/'
-  
+
   # Output NULL
   subjects <- NULL
-  
+
   # Test internet connection
   if (curl::has_internet()) {
-    
+
     Sys.sleep(.01)
     tryCatch({
-      
+
       ## Starting: Extract from JSON >
       ##           Transform to tbl >
       ##           Select variables >
@@ -166,15 +166,15 @@ available_subjects <- function(language = c("en", "br")) {
         dplyr::select(.data$TEMCODIGO, .data$TEMNOME) %>%
         dplyr::arrange(.data$TEMCODIGO) %>%
         dplyr::mutate(TEMNOME = as.character(.data$TEMNOME))
-      
+
     }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
-    
+
     # Setting labels in selected language
     if (!is.null(subjects)) {
-      
+
       # Setting labels in selected language
       if (language == 'en') {
-        
+
         subjects %<>%
           dplyr::mutate(TEMNOME = iconv(.data$TEMNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
           dplyr::mutate(TEMNOME = factor(.data$TEMNOME,
@@ -201,18 +201,18 @@ available_subjects <- function(language = c("en", "br")) {
                                                     'mHDI2000', 'mHDI1991', 'Regional Accounts', 'COVID19'))) %>%
           purrr::set_names(c('scode', 'sname')) %>%
           sjlabelled::set_label(c('Subject Code','Subject Name'))
-        
+
       } else {
-        
+
         subjects %<>%
           dplyr::mutate(TEMNOME = factor(.data$TEMNOME)) %>%
           purrr::set_names(c('scode', 'sname')) %>%
           sjlabelled::set_label(c('Codigo do Tema','Nome do Tema'))
-        
+
       }
-      
+
     }
-    
+
   } else {
     message("The internet connection is unavailable.")
   }
@@ -242,16 +242,16 @@ available_countries <- function(language = c("en", "br")) {
 
   # URL for countries
   url <- 'http://www.ipeadata.gov.br/api/odata4/Paises/'
-  
+
   # Output NULL
   countries <- NULL
-  
+
   # Test internet connection
   if (curl::has_internet()) {
-    
+
     Sys.sleep(.01)
     tryCatch({
-      
+
       ## Starting: Extract from JSON >
       ##           Transform to tbl >
       ##           Sort by code
@@ -259,15 +259,15 @@ available_countries <- function(language = c("en", "br")) {
         jsonlite::fromJSON(url, flatten = TRUE)[[2]] %>%
         dplyr::as_tibble() %>%
         dplyr::arrange(.data$PAICODIGO)
-      
+
     }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
-    
+
     # Setting labels in selected language
     if (!is.null(countries)) {
-      
+
       # Setting labels in selected language
       if (language == 'en') {
-        
+
         countries %<>%
           dplyr::mutate(PAINOME = iconv(.data$PAINOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
           dplyr::mutate(PAINOME = factor(.data$PAINOME,
@@ -303,17 +303,17 @@ available_countries <- function(language = c("en", "br")) {
           dplyr::mutate(PAINOME = as.character(.data$PAINOME)) %>%
           purrr::set_names(c('tcode', 'tname')) %>%
           sjlabelled::set_label(c('Country Code','Country Name'))
-        
+
       } else {
-        
+
         countries %<>%
           purrr::set_names(c('tcode', 'tname')) %>%
           sjlabelled::set_label(c('Codigo do Pais','Nome do Pais'))
-        
+
       }
-      
+
     }
-    
+
   } else {
     message("The internet connection is unavailable.")
   }
@@ -335,7 +335,7 @@ available_countries <- function(language = c("en", "br")) {
 #'
 #' @return A data frame containing unit name, code, name and area (in km2)
 #'  of Brazilian territorial divisions.
-#' 
+#'
 #' @export
 
 available_territories <- function(language = c("en", "br")) {
@@ -345,16 +345,16 @@ available_territories <- function(language = c("en", "br")) {
 
   # URL for territories
   url <- 'http://www.ipeadata.gov.br/api/odata4/Territorios/'
-  
+
   # Output NULL
   territories <- NULL
-  
+
   # Test internet connection
   if (curl::has_internet()) {
-    
+
     Sys.sleep(.01)
     tryCatch({
-      
+
       ## Starting: Extract from JSON >
       ##           Transform to tbl >
       ##           Select variables >
@@ -368,15 +368,15 @@ available_territories <- function(language = c("en", "br")) {
         dplyr::select(.data$NIVNOME, .data$TERCODIGO, .data$TERNOME, .data$TERAREA) %>%
         dplyr::filter(!is.na(.data$TERAREA)) %>%
         dplyr::arrange(.data$TERCODIGO)
-      
+
     }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
-    
+
     # Setting labels in selected language
     if (!is.null(territories)) {
-      
+
       # Setting labels in selected language
       if (language == 'en') {
-        
+
         territories %<>%
           dplyr::mutate(NIVNOME = iconv(.data$NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
           dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
@@ -392,9 +392,9 @@ available_territories <- function(language = c("en", "br")) {
           purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
           sjlabelled::set_label(c('Territorial Unit Name',
                                   'Territorial Code','Territorial Name','Area (Km2)'))
-        
+
       } else {
-        
+
         territories %<>%
           dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
                                          levels = levels(factor(.data$NIVNOME))[ c(
@@ -418,11 +418,11 @@ available_territories <- function(language = c("en", "br")) {
           purrr::set_names(c('uname', 'tcode', 'tname', 'area')) %>%
           sjlabelled::set_label(c('Nome da Unidade Territorial',
                                   'Codigo Territorial','Nome do Territorio','Area (Km2)'))
-        
+
       }
-      
+
     }
-    
+
   } else {
     message("The internet connection is unavailable.")
   }
@@ -446,7 +446,7 @@ available_territories <- function(language = c("en", "br")) {
 #' @return A data frame containing Ipeadata code, name, short comment, last update, theme name,
 #'  source's name and full name, source's URL, frequency, unity, multiplier factor, status,
 #'  subject code and the country or territorial code of requested series.
-#'  
+#'
 #' @examples
 #' \dontrun{
 #' # Metadata from
@@ -485,60 +485,60 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 
   # Test internet connection
   if (curl::has_internet()) {
-    
+
     Sys.sleep(.01)
     tryCatch({
-      
+
       # Retrieve metadata 1 by 1
       for (i in 1:length(code)) {
-        
+
         # Check
         code0 <- gsub(" ", "_", toupper(code[i]))
-        
+
         # URL for metadata
         url <- paste0("http://www.ipeadata.gov.br/api/odata4/Metadados('", code0,"')")
-        
+
         # Extract from JSON
         Sys.sleep(.01)
         metadata.aux <- jsonlite::fromJSON(url, flatten = TRUE)[[2]]
-        
+
         if (length(metadata.aux) > 0) {
-          
+
           ## Starting: Transform to tbl >
           ##           Select variables
           metadata.aux %<>%
             dplyr::as_tibble() %>%
             dplyr::select(- .data$SERNUMERICA)
-          
+
           # Concatenate rows
           metadata <- rbind(metadata, metadata.aux)
-          
+
         } else {
-          
+
           warning(paste0("code '", code[i], "' not found"))
-          
+
         }
-        
+
         # Progress Bar
         if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
           setTxtProgressBar(pb, i)
         }
       }
-      
+
     }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
-    
+
   } else {
     message("The internet connection is unavailable.")
   }
-  
+
   # Progress Bar closes
   if (!quiet & (length(code) >= 2)) {
     close(pb)
   }
-  
+
   # Setting labels in selected language
   if (nrow(metadata) != 0) {
-    
+
     ## Starting: Transform in date >
     ##           Transform in factor >
     ##           Transform in factor >
@@ -550,10 +550,10 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
       dplyr::mutate(FNTNOME = as.factor(.data$FNTNOME)) %>%
       dplyr::mutate(SERSTATUS = as.character(.data$SERSTATUS)) %>%
       dplyr::mutate(SERSTATUS = dplyr::if_else(is.na(.data$SERSTATUS), '', .data$SERSTATUS))
-    
+
     # Setting labels in selected language
     if (language == 'en') {
-      
+
       metadata %<>%
         dplyr::mutate(BASNOME = iconv(.data$BASNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
         dplyr::mutate(BASNOME = factor(.data$BASNOME,
@@ -653,9 +653,9 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                 'Theme name', 'Source', 'Source Name', 'Source URL',
                                 'Frequency', 'Unity', 'Multiplier Factor', 'Status',
                                 'Subject Code', 'Country or Territorial Code'))
-      
+
     } else {
-      
+
       metadata %<>%
         dplyr::mutate(BASNOME = factor(.data$BASNOME)) %>%
         dplyr::mutate(UNINOME = factor(.data$UNINOME)) %>%
@@ -671,11 +671,11 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
                                 'Nome da Base', 'Fonte', 'Nome da Fonte', 'URL da Fonte',
                                 'Frequencia', 'Unidade', 'Fator Multiplicador', 'Status',
                                 'Codigo do Tema', 'Codigo de Pais ou Territorial'))
-      
+
     }
-    
+
   }
-  
+
   metadata
 }
 
@@ -694,7 +694,7 @@ metadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #'
 #' @return A data frame containing Ipeadata code, date, value, territorial unit name
 #' and country or territorial code of requested series.
-#' 
+#'
 #'
 #' @examples
 #' \dontrun{
@@ -729,52 +729,52 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
     pb <- txtProgressBar(min = 0, max = length(code), style = 3)
   }
   update.step <- max(2, floor(length(code)/100))
-  
+
   # Test internet connection
   if (curl::has_internet()) {
-    
+
     Sys.sleep(.01)
     tryCatch({
-      
+
       # Retrieve metadata 1 by 1
       for (i in 1:length(code)){
-        
+
         # Check
         code0 <- gsub(" ", "_", toupper(code[i]))
-        
+
         # URL for metadata
         url <- paste0("http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='", code0, "')")
-        
+
         # Extract from JSON
         Sys.sleep(.01)
         values.aux <- dplyr::as_tibble(jsonlite::fromJSON(url, flatten = TRUE)[[2]])
-        
+
         if (length(values.aux) > 0) {
-          
+
           # Sorting by ccode and date
           values.aux %<>%
             dplyr::mutate(TERCODIGO = as.integer(.data$TERCODIGO)) %>%
             dplyr::mutate(NIVNOME = as.factor(.data$NIVNOME)) %>%
             dplyr::mutate(VALDATA = lubridate::as_date(.data$VALDATA)) %>%
             dplyr::arrange(.data$TERCODIGO, .data$VALDATA)
-          
+
           # Concatenate rows
           values <- rbind(values, values.aux)
-          
+
         } else {
-          
+
           warning(paste0("code '", code[i], "' not found"))
-          
+
         }
-        
+
         # Progress Bar
         if (!quiet & (i %% update.step == 0 | i == length(code)) & (length(code) >= 2)) {
           setTxtProgressBar(pb, i)
         }
       }
-      
+
     }, error = function(e){cat("ERROR :", conditionMessage(e), "\n")})
-    
+
   } else {
     message("The internet connection is unavailable.")
   }
@@ -783,10 +783,10 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
   if (!quiet & (length(code) >= 2)) {
     close(pb)
   }
-  
+
   # Setting labels in selected language
   if (nrow(values) != 0) {
-    
+
     ## Starting: Remove NA >
     ##           Rename variables >
     ##           Add subtitles >
@@ -794,10 +794,10 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
     values %<>%
       dplyr::filter(!is.na(.data$VALVALOR)) %>%
       dplyr::distinct()
-    
+
     # Setting labels in selected language
     if (language == 'en') {
-      
+
       values %<>%
         dplyr::mutate(NIVNOME = iconv(.data$NIVNOME, 'UTF-8', 'ASCII//TRANSLIT')) %>%
         dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
@@ -813,9 +813,9 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
         sjlabelled::set_label(c('Ipeadata Code', 'Date', 'Value',
                                 'Territorial Unit Name',
                                 'Country or Territorial Code'))
-      
+
     } else {
-      
+
       values %<>%
         dplyr::mutate(NIVNOME = factor(.data$NIVNOME,
                                        levels = levels(factor(.data$NIVNOME))[ c(
@@ -839,10 +839,10 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
         sjlabelled::set_label(c('Codigo Ipeadata', 'Data', 'Valor',
                                 'Nome da Unidade Territorial',
                                 'Codigo de Pais ou Territorial'))
-      
+
     }
   }
-  
+
   values
 }
 
@@ -853,13 +853,13 @@ ipeadata <- function(code, language = c("en", "br"), quiet = FALSE) {
 #' @description Returns a list with searched series by terms from Ipeadata API database.
 #'
 #' @usage search_series(terms = NULL, fields = c('name'), language = c("en", "br"))
-#' 
+#'
 #' @param terms A character vector with search terms.
 #' @param fields A character vector with table fields where matches are sought. See 'Details'.
 #' @param language String specifying the selected language. Language options are
 #' English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).
-#' 
-#' @details The \code{fields} options are \code{"code"}, \code{"name"}, \code{"theme"}, 
+#'
+#' @details The \code{fields} options are \code{"code"}, \code{"name"}, \code{"theme"},
 #' \code{"source"}, \code{"freq"}, \code{"lastupdate"} and \code{"status"}.
 #'
 #' @return A data frame containing Ipeadata code, name, theme, source,
@@ -873,35 +873,35 @@ search_series <- function(terms = NULL, fields = c('name'), language = c("en", "
 
   # Check language arg
   language <- match.arg(language)
-  
+
   # Getting all series
   all_series <- available_series(language = language)
-  
+
   # Searching
   users_search <- dplyr::as_tibble(NULL)
-  
+
   if (!is.null(terms)) {
-    
+
     for (i in 1:length(fields)) {
-      
+
       for (j in 1:length(terms)) {
-        
-        users_search %<>% 
-          dplyr::bind_rows(users_search, 
-                           all_series %>% 
-                             dplyr::filter_(~ stringr::str_detect(string = get(fields[i]), pattern = terms[j]))) %>%
+
+        users_search %<>%
+          dplyr::bind_rows(users_search,
+                           all_series %>%
+                             dplyr::filter(grepl(x = get(fields[i]), pattern = terms[j], ignore.case = TRUE))) %>%
           dplyr::distinct()
 
       }
-      
+
     }
-    
+
   } else {
-    
+
     users_search <- all_series
-    
+
   }
-    
+
    # Setting labels in selected language
    if (language == 'en') {
      users_search %<>%
@@ -916,9 +916,13 @@ search_series <- function(terms = NULL, fields = c('name'), language = c("en", "
        sjlabelled::set_label(c('Codigo Ipeadata','Nome da Serie', 'Nome da Base', 'Fonte',
                                'Frequencia','Ultima Atualizacao','Status'))
    }
-  
+
   users_search
-    
+
 }
 
 # Change frequency ------------------------------------------------
+
+
+
+
