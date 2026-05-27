@@ -10,14 +10,14 @@ search_series(terms = NULL, language = c("en", "br"), label = TRUE)
 \item{terms}{A character vector of search terms.}
 
 \item{language}{A character string specifying the language. Available
-options are English (`"en"`, default) and Brazilian Portuguese (`"br"`).}
+options are English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 
-\item{label}{Logical. If `TRUE` (default), variable labels are added to
-the output data frame using `sjlabelled::set_label()`.}
+\item{label}{Logical. If \code{TRUE} (default), variable labels are added to
+the output data frame using \code{sjlabelled::set_label()}.}
 }
 \value{
 A data frame containing the Ipeadata code, name, theme, source,
-  frequency, last update, and activity status of the matched series.
+frequency, last update, and activity status of the matched series.
 }
 \description{
 Searches for Ipeadata series matching the provided terms.

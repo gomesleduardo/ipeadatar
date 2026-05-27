@@ -10,24 +10,24 @@ metadata(code, language = c("en", "br"), label = TRUE, quiet = FALSE)
 \item{code}{A character vector of Ipeadata series codes.}
 
 \item{language}{A character string specifying the language. Available
-options are English (`"en"`, default) and Brazilian Portuguese (`"br"`).}
+options are English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 
-\item{label}{Logical. If `TRUE` (default), variable labels are added to
-the output data frame using `sjlabelled::set_label()`.}
+\item{label}{Logical. If \code{TRUE} (default), variable labels are added to
+the output data frame using \code{sjlabelled::set_label()}.}
 
-\item{quiet}{Logical. If `FALSE` (default), a progress bar is displayed.}
+\item{quiet}{Logical. If \code{FALSE} (default), a progress bar is displayed.}
 }
 \value{
 A data frame containing metadata for the requested Ipeadata series,
-  including code, name, comments, last update, theme, source, frequency,
-  unit, multiplier, status, subject code, and country code.
+including code, name, comments, last update, theme, source, frequency,
+unit, multiplier, status, subject code, and country code.
 }
 \description{
 Returns metadata information for requested Ipeadata series.
 }
 \note{
 The original language of series names and comments is preserved.
-  Ipeadata codes may be obtained using [available_series()].
+Ipeadata codes may be obtained using \code{\link[=available_series]{available_series()}}.
 }
 \examples{
 \donttest{
@@ -37,9 +37,9 @@ meta <- metadata(code = "PRECOS12_IPCA12")
 }
 \references{
 This package uses the Ipeadata API:
-  \url{https://www.ipeadata.gov.br/}
+\url{https://www.ipeadata.gov.br/}
 }
 \seealso{
-[available_series()], [available_subjects()],
-  [available_territories()]
+\code{\link[=available_series]{available_series()}}, \code{\link[=available_subjects]{available_subjects()}},
+\code{\link[=available_territories]{available_territories()}}
 }

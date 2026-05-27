@@ -10,22 +10,22 @@ ipeadata(code, language = c("en", "br"), label = TRUE, quiet = FALSE)
 \item{code}{A character vector of Ipeadata series codes.}
 
 \item{language}{A character string specifying the language. Available
-options are English (`"en"`, default) and Brazilian Portuguese (`"br"`).}
+options are English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 
-\item{label}{Logical. If `TRUE` (default), variable labels are added to
-the output data frame using `sjlabelled::set_label()`.}
+\item{label}{Logical. If \code{TRUE} (default), variable labels are added to
+the output data frame using \code{sjlabelled::set_label()}.}
 
-\item{quiet}{Logical. If `FALSE` (default), a progress bar is displayed.}
+\item{quiet}{Logical. If \code{FALSE} (default), a progress bar is displayed.}
 }
 \value{
 A data frame containing the Ipeadata code, date, value,
-  territorial unit name, and territorial code of the requested series.
+territorial unit name, and territorial code of the requested series.
 }
 \description{
 Returns the data associated with requested Ipeadata series.
 }
 \note{
-Ipeadata codes may be obtained using [available_series()].
+Ipeadata codes may be obtained using \code{\link[=available_series]{available_series()}}.
 }
 \examples{
 \donttest{
@@ -38,8 +38,8 @@ data <- ipeadata(
 }
 \references{
 This package uses the Ipeadata API:
-  \url{https://www.ipeadata.gov.br/}
+\url{https://www.ipeadata.gov.br/}
 }
 \seealso{
-[available_series()], [available_territories()]
+\code{\link[=available_series]{available_series()}}, \code{\link[=available_territories]{available_territories()}}
 }

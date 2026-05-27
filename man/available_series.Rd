@@ -8,14 +8,14 @@ available_series(language = c("en", "br"), label = TRUE)
 }
 \arguments{
 \item{language}{A character string specifying the language. Available
-options are English (`"en"`, default) and Brazilian Portuguese (`"br"`).}
+options are English (\code{"en"}, default) and Brazilian Portuguese (\code{"br"}).}
 
-\item{label}{Logical. If `TRUE` (default), variable labels are added to
-the output data frame using `sjlabelled::set_label()`.}
+\item{label}{Logical. If \code{TRUE} (default), variable labels are added to
+the output data frame using \code{sjlabelled::set_label()}.}
 }
 \value{
 A data frame containing the Ipeadata code, name, theme, source,
-  frequency, last update, and activity status of available series.
+frequency, last update, and activity status of available series.
 }
 \description{
 Returns a list of available series from the Ipeadata API.
