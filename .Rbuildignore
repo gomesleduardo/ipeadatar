@@ -7,3 +7,9 @@
 ^README\.md$
 ^README-.*\.png$
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^codecov\.yml$
+^\.positai$
+^\.claude$

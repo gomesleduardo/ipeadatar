@@ -4,3 +4,8 @@
 .Ruserdata
 ipeadatar.Rproj
 inst/doc
+docs
+.positai
+.httr-oauth
+.DS_Store
+.quarto

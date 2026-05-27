@@ -1,30 +1,52 @@
 Package: ipeadatar
 Type: Package
 Title: API Wrapper for 'Ipeadata'
-Version: 0.1.6
-Authors@R: c(
-    person("Luiz Eduardo S.","Gomes", role=c("aut","cre"), email="gomes.leduardo@gmail.com"),
-    person("Jessyka A. P.","Goltara", role=c("ctb"), email="jessykagoltara@gmail.com")
+Version: 0.2.0
+Authors@R:
+    c(
+      person(
+        given = "Luiz Eduardo",
+        family = "Gomes",
+        email = "luiz.gomes@ipea.gov.br",
+        role = c("aut", "cre"),
+        comment = c(ORCID = "0000-0001-8968-5947")
+      ),
+      person(
+        given = "Daniel",
+        family = "Herszenhut",
+        email = "daniel.santos@ipea.gov.br",
+        role = "ctb",
+        comment = c(ORCID = "0000-0001-8066-1105")
+      ),
+      person(
+        given = "Instituto de Pesquisa Economica Aplicada (Ipea)",
+        role = c("cph", "fnd")
+      )
     )
-Author: Luiz Eduardo S. Gomes [aut, cre],
-        Jessyka A. P. Goltara [ctb]
-Maintainer: Luiz Eduardo S. Gomes <gomes.leduardo@gmail.com>
-Description: Allows direct access to the macroeconomic, 
-             financial and regional database maintained by 
-             Brazilian Institute for Applied Economic Research ('Ipea').
-             This R package uses the 'Ipeadata' API. For more information, 
-             see <http://www.ipeadata.gov.br/>.
-Depends: R (>= 3.5.0)
+Description:
+    Provides direct access to the macroeconomic, financial,
+    and regional database maintained by the Institute for
+    Applied Economic Research (Ipea) via the Ipeadata API.
+    For more information, see <https://www.ipeadata.gov.br/>.
+Depends:
+    R (>= 4.1.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-US
 URL: https://github.com/ipea/ipeadatar
 BugReports: https://github.com/ipea/ipeadatar/issues
-Imports: stringr, curl, rlang, jsonlite, magrittr, dplyr, lubridate, purrr, sjlabelled
-NeedsCompilation: no
-RoxygenNote: 7.1.2
-Suggests: 
-    rmarkdown,
-    knitr,
+Imports:
+    cli,
+    curl,
+    dplyr,
+    jsonlite,
+    lubridate,
+    purrr,
+    rlang,
+    sjlabelled
+Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
+NeedsCompilation: no

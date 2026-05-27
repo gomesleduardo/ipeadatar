@@ -1,0 +1,211 @@
+---
+title: "ipeadatar"
+subtitle: "API Wrapper for Ipeadata"
+author: "Institute for Applied Economic Research (Ipea)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ipeadatar}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+`ipeadatar` provides direct access to the macroeconomic, financial, and
+regional database maintained by the Institute for Applied Economic
+Research (Ipea) via the Ipeadata API.
+
+The package allows users to search for series, retrieve metadata, and
+download series data directly from R.
+
+## Installation
+
+You can install the released version from CRAN:
+
+```{r}
+install.packages("ipeadatar")
+```
+
+Or the development version from GitHub:
+
+```{r}
+pak::pak("gomesleduardo/ipeadatar")
+```
+
+Then load the package:
+
+```{r}
+library(ipeadatar)
+```
+
+## Main functions
+
+| Function                  | Description                             |
+|---------------------------|-----------------------------------------|
+| `available_series()`      | Lists available Ipeadata series         |
+| `available_subjects()`    | Lists available subjects                |
+| `available_territories()` | Lists available territorial divisions   |
+| `search_series()`         | Searches for series using keywords      |
+| `metadata()`              | Retrieves metadata for requested series |
+| `ipeadata()`              | Retrieves data for requested series     |
+
+## Available series
+
+Use `available_series()` to list the series available from the Ipeadata
+API.
+
+```{r}
+series <- available_series(label = FALSE)
+head(series)
+```
+
+The column `code` can be used as input for `metadata()` and
+`ipeadata()`.
+
+```{r}
+series_br <- available_series(language = "br", label = FALSE)
+head(series_br)
+```
+
+## Available subjects
+
+Use `available_subjects()` to list the subjects available in Ipeadata.
+
+```{r}
+subjects <- available_subjects(label = FALSE)
+head(subjects)
+```
+
+## Available territorial divisions
+
+Use `available_territories()` to list territorial divisions available in
+Ipeadata.
+
+```{r}
+territories <- available_territories(label = FALSE)
+head(territories)
+```
+
+## Search series
+
+Use `search_series()` to search for series using one or more terms.
+
+```{r}
+search_series(terms = "inflation", label = FALSE)
+```
+
+You can also search in Brazilian Portuguese:
+
+```{r}
+search_series(
+  terms = "inflação",
+  language = "br",
+  label = FALSE
+)
+```
+
+If `terms = NULL`, all available series are returned.
+
+```{r}
+search_series(label = FALSE)
+```
+
+## Metadata
+
+After identifying a series code, use `metadata()` to retrieve metadata.
+
+For example, `"PRECOS12_IPCA12"` refers to Brazil's official consumer
+price inflation index, IPCA.
+
+```{r}
+meta <- metadata(
+  code = "PRECOS12_IPCA12",
+  label = FALSE
+)
+
+meta
+```
+
+For multiple series:
+
+```{r}
+meta <- metadata(
+  code = c("PRECOS12_IPCA12", "BM12_TJCDI12"),
+  label = FALSE
+)
+
+meta
+```
+
+## Data
+
+Use `ipeadata()` to retrieve the observations of a requested series.
+
+```{r}
+ipca <- ipeadata(
+  code = "PRECOS12_IPCA12",
+  label = FALSE
+)
+
+head(ipca)
+```
+
+The returned data frame contains the series code, date, value,
+territorial unit name, and territorial code.
+
+## Basic plot
+
+The downloaded data can be used directly with base R or other
+visualization packages.
+
+```{r}
+ipca <- ipeadata(
+  code = "PRECOS12_IPCA12",
+  label = FALSE
+)
+
+plot(
+  ipca$date,
+  ipca$value,
+  type = "l",
+  xlab = "Date",
+  ylab = "Value",
+  main = "IPCA"
+)
+```
+
+## Variable labels
+
+By default, functions add variable labels using `sjlabelled`.
+
+```{r}
+series <- available_series(label = TRUE)
+```
+
+To return a plain data frame without labels, use:
+
+```{r}
+series <- available_series(label = FALSE)
+```
+
+This option is available in the main functions:
+
+```{r}
+available_series(label = FALSE)
+available_subjects(label = FALSE)
+available_territories(label = FALSE)
+search_series(terms = "rural", label = FALSE)
+metadata(code = "PRECOS12_IPCA12", label = FALSE)
+ipeadata(code = "PRECOS12_IPCA12", label = FALSE)
+```
