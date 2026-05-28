@@ -15,3 +15,4 @@
 ^\.claude$
 ^doc$
 ^Meta$
+^CRAN-SUBMISSION$
