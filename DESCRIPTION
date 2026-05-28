@@ -19,7 +19,7 @@ Authors@R:
         comment = c(ORCID = "0000-0001-8066-1105")
       ),
       person(
-        given = "Instituto de Pesquisa Economica Aplicada (Ipea)",
+        given = "Instituto de Pesquisa Econômica Aplicada (Ipea)",
         role = c("cph", "fnd")
       )
     )
@@ -48,7 +48,8 @@ Imports:
 Suggests:
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    spelling
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
