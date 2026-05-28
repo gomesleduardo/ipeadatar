@@ -29,7 +29,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Daniel Herszenhut \email{daniel.santos@ipea.gov.br} (\href{https://orcid.org/0000-0001-8066-1105}{ORCID}) [contributor]
-  \item Instituto de Pesquisa Economica Aplicada (Ipea) [copyright holder, funder]
+  \item Instituto de Pesquisa Econômica Aplicada (Ipea) [copyright holder, funder]
 }
 
 }
