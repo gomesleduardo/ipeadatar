@@ -1,0 +1,124 @@
+# ipeadatar <img align="right" src="man/figures/logo.png" alt="" width="180">
+
+[![CRAN status](https://www.r-pkg.org/badges/version/ipeadatar)](https://CRAN.R-project.org/package=ipeadatar)
+[![R-CMD-check](https://github.com/ipea/ipeadatar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ipea/ipeadatar/actions/workflows/R-CMD-check.yaml)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/ipeadatar?color=blue)](https://CRAN.R-project.org/package=ipeadatar)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+
+**ipeadatar** is an R package that provides direct access to the
+macroeconomic, financial, social, and regional databases maintained by
+the Institute for Applied Economic Research (Ipea) through the Ipeadata API.
+
+The package allows users to search for available series, retrieve
+metadata, and download time series directly from R.
+
+## Installation
+
+The stable version can be installed from CRAN:
+
+```r
+install.packages("ipeadatar")
+```
+
+The development version can be installed from GitHub:
+
+```r
+# install.packages("pak")
+pak::pak("ipea/ipeadatar")
+```
+
+## Usage
+
+Load the package:
+
+```r
+library(ipeadatar)
+```
+
+### Available series
+
+Retrieve all available Ipeadata series:
+
+```r
+series <- available_series()
+head(series)
+```
+
+### Search series
+
+Search for series using keywords:
+
+```r
+search_series("rural")
+```
+
+### Metadata
+
+Retrieve metadata for a specific series:
+
+```r
+meta <- metadata("PRECOS12_IPCA12")
+meta
+```
+
+### Data
+
+Retrieve observations for a specific series:
+
+```r
+ipca <- ipeadata("PRECOS12_IPCA12")
+head(ipca)
+```
+
+### Basic plot
+
+```r
+ipca <- ipeadata("PRECOS12_IPCA12")
+
+plot(
+  ipca$date,
+  ipca$value,
+  type = "l",
+  xlab = "Date",
+  ylab = "Value",
+  main = "IPCA"
+)
+```
+
+## Main functions
+
+| Function | Description |
+|---|---|
+| `available_series()` | Lists available Ipeadata series |
+| `available_subjects()` | Lists available subjects |
+| `available_territories()` | Lists available territorial divisions |
+| `search_series()` | Searches for series using keywords |
+| `metadata()` | Retrieves metadata for requested series |
+| `ipeadata()` | Retrieves data for requested series |
+
+## Variable labels
+
+By default, functions add variable labels using `sjlabelled`.
+
+```r
+available_series(label = TRUE)
+```
+
+To disable labels:
+
+```r
+available_series(label = FALSE)
+```
+
+## Documentation
+
+Additional examples and package documentation are available in the package vignette:
+
+```r
+browseVignettes("ipeadatar")
+```
+
+## Note <a href="https://www.ipea.gov.br"><img src="man/figures/ipea_logo.png" alt="Ipea" align="right" width="250"/></a>
+
+**ipeadatar** is developed by researchers from the
+Institute for Applied Economic Research (Ipea).
