@@ -1,5 +1,8 @@
 test_that("available_series returns a data frame", {
   
+  skip_on_cran()
+  skip_if_offline()
+  
   x <- available_series(label = FALSE)
   
   expect_s3_class(x, "data.frame")

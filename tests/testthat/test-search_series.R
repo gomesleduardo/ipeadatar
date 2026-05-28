@@ -1,5 +1,6 @@
 test_that("search_series validates terms", {
   
+  skip_on_cran()
   skip_if_offline()
   
   expect_error(

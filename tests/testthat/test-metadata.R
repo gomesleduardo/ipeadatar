@@ -1,5 +1,6 @@
 test_that("metadata returns expected columns", {
   
+  skip_on_cran()
   skip_if_offline()
   
   x <- metadata(

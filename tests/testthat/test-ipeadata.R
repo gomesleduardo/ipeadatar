@@ -1,5 +1,6 @@
 test_that("ipeadata returns values", {
   
+  skip_on_cran()
   skip_if_offline()
   
   x <- ipeadata(
