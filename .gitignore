@@ -8,3 +8,6 @@ docs
 .positai
 .httr-oauth
 .DS_Store
+.quarto
+/doc/
+/Meta/
