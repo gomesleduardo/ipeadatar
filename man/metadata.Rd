@@ -30,10 +30,7 @@ The original language of series names and comments is preserved.
 Ipeadata codes may be obtained using \code{\link[=available_series]{available_series()}}.
 }
 \examples{
-\donttest{
-meta <- metadata(code = "PRECOS12_IPCA12")
-}
-
+\donttest{meta <- metadata(code = "PRECOS12_IPCA12")}
 }
 \references{
 This package uses the Ipeadata API:

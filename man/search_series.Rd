@@ -26,8 +26,5 @@ Searches for Ipeadata series matching the provided terms.
 The original language of the series names is preserved.
 }
 \examples{
-\donttest{
-search_series(terms = "rural")
-}
-
+\donttest{search_series(terms = "rural")}
 }

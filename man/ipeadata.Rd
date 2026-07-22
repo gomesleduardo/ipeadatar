@@ -28,13 +28,7 @@ Returns the data associated with requested Ipeadata series.
 Ipeadata codes may be obtained using \code{\link[=available_series]{available_series()}}.
 }
 \examples{
-\donttest{
-data <- ipeadata(
-  code = "PRECOS12_IPCA12",
-  language = "en"
-)
-}
-
+\donttest{data <- ipeadata(code = "PRECOS12_IPCA12")}
 }
 \references{
 This package uses the Ipeadata API:
