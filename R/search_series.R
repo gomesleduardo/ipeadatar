@@ -13,16 +13,16 @@
 #' @return A data frame containing the Ipeadata code, name, theme, source,
 #'   frequency, last update, and activity status of the matched series.
 #'
-#' @examples
-#' \donttest{
-#' search_series(terms = "rural")
-#' }
-#'
 #' @note The original language of the series names is preserved.
 #'
 #' @export
+#' 
+#' @examples
+#' \donttest{search_series(terms = "rural")}
 
-search_series <- function(terms = NULL, language = c("en", "br"), label = TRUE) {
+search_series <- function(
+    terms = NULL, language = c("en", "br"), label = TRUE
+) {
   
   # Check language arg
   language <- match.arg(language)

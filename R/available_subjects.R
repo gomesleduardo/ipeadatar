@@ -19,6 +19,7 @@ available_subjects <- function(language = c("en", "br"), label = TRUE) {
   
   # URL for subjects
   url <- "https://www.ipeadata.gov.br/api/odata4/Temas/"
+  urla <- "http://www.ipeadata.gov.br/api/odata4/Temas/"
   
   # Output NULL
   subjects <- NULL
@@ -26,28 +27,58 @@ available_subjects <- function(language = c("en", "br"), label = TRUE) {
   # Test internet connection
   if (curl::has_internet()) {
     
+    ## Main URL 
     Sys.sleep(.01)
     tryCatch({
       
+      res <- curl::curl_fetch_memory(url)
       ## Starting: Extract from JSON >
       ##           Transform to tbl >
       ##           Select variables >
       ##           Sort by code >
       ##           Transform in chr
-      subjects <- jsonlite::fromJSON(url, flatten = TRUE)[[2]] |>
+      subjects <- jsonlite::fromJSON(
+        rawToChar(res$content),
+        flatten = TRUE
+      )[["value"]] |>
         dplyr::as_tibble() |>
         dplyr::select("TEMCODIGO", "TEMNOME") |>
         dplyr::arrange(.data$TEMCODIGO) |>
         dplyr::mutate(TEMNOME = as.character(.data$TEMNOME))
       
-    }, error = function(e) {
-      rlang::abort(
-        "Failed to retrieve data from the Ipeadata API.",
-        class = "ipeadata_api_error",
-        parent = e
-      )
-    })
+    }, error = function(e) {NULL})
     
+    ## Alternative URL
+    if (is.null(subjects)) {
+      
+      Sys.sleep(.01)
+      tryCatch({
+        
+        res <- curl::curl_fetch_memory(urla)
+        ## Starting: Extract from JSON >
+        ##           Transform to tbl >
+        ##           Select variables >
+        ##           Sort by code >
+        ##           Transform in chr
+        subjects <- jsonlite::fromJSON(
+          rawToChar(res$content),
+          flatten = TRUE
+        )[["value"]] |>
+          dplyr::as_tibble() |>
+          dplyr::select("TEMCODIGO", "TEMNOME") |>
+          dplyr::arrange(.data$TEMCODIGO) |>
+          dplyr::mutate(TEMNOME = as.character(.data$TEMNOME))
+        
+      }, error = function(e) {
+        rlang::abort(
+          "Failed to retrieve data from the Ipeadata API.",
+          class = "ipeadata_api_error",
+          parent = e
+        )
+      })
+      
+    }
+
     # Setting labels in selected language
     if (!is.null(subjects)) {
       

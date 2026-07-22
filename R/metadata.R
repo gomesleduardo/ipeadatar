@@ -16,11 +16,6 @@
 #'   including code, name, comments, last update, theme, source, frequency,
 #'   unit, multiplier, status, subject code, and country code.
 #'
-#' @examples
-#' \donttest{
-#' meta <- metadata(code = "PRECOS12_IPCA12")
-#' }
-#'
 #' @note The original language of series names and comments is preserved.
 #'   Ipeadata codes may be obtained using [available_series()].
 #'
@@ -31,7 +26,13 @@
 #'   \url{https://www.ipeadata.gov.br/}
 #'
 #' @export
-metadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE) {
+#' 
+#' @examples
+#' \donttest{meta <- metadata(code = "PRECOS12_IPCA12")}
+
+metadata <- function(
+    code, language = c("en", "br"), label = TRUE, quiet = FALSE
+) {
   
   # Check language arg
   language <- match.arg(language)
@@ -58,8 +59,8 @@ metadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
   # Test internet connection
   if (curl::has_internet()) {
     
+    ## Main URL 
     Sys.sleep(.01)
-    
     tryCatch({
       
       # Retrieve metadata for each series
@@ -77,7 +78,12 @@ metadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
         
         # Extract from JSON
         Sys.sleep(.01)
-        metadata.aux <- jsonlite::fromJSON(url, flatten = TRUE)[[2]]
+        res <- curl::curl_fetch_memory(url)
+        metadata.aux <- jsonlite::fromJSON(
+          rawToChar(res$content),
+          flatten = TRUE
+        )[["value"]] |>
+          dplyr::as_tibble()
         
         if (nrow(metadata.aux) > 0) {
           
@@ -100,20 +106,83 @@ metadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
         }
         
         # Progress Bar
-        if (!quiet && n >= 2 && (i %% update.step == 0L || i == n)) {
-          cli::cli_progress_update(id = pb, set = i)
+        if (nrow(metadata) > 0) {
+          
+          if (!quiet && n >= 2 && (i %% update.step == 0L || i == n)) {
+            cli::cli_progress_update(id = pb, set = i)
+          }
+          
         }
-        
+
       }
       
-    }, error = function(e) {
-      rlang::abort(
-        "Failed to retrieve data from the Ipeadata API.",
-        class = "ipeadata_api_error",
-        parent = e
-      )
-    })
+    }, error = function(e) {NULL})
     
+    ## Alternative URL 
+    if (nrow(metadata) == 0) {
+      
+      Sys.sleep(.01)
+      tryCatch({
+        
+        # Retrieve metadata for each series
+        for (i in seq_len(n)) {
+          
+          # Check
+          code0 <- gsub(" ", "_", toupper(code[i]))
+          
+          # URL for metadata
+          url <- paste0(
+            "http://www.ipeadata.gov.br/api/odata4/Metadados('",
+            code0,
+            "')"
+          )
+          
+          # Extract from JSON
+          Sys.sleep(.01)
+          res <- curl::curl_fetch_memory(url)
+          metadata.aux <- jsonlite::fromJSON(
+            rawToChar(res$content),
+            flatten = TRUE
+          )[["value"]] |>
+            dplyr::as_tibble()
+          
+          if (nrow(metadata.aux) > 0) {
+            
+            ## Starting: Transform to tbl >
+            ##           Select variables
+            metadata.aux <- metadata.aux |>
+              dplyr::as_tibble() |>
+              dplyr::select(-"SERNUMERICA")
+            
+            # Concatenate rows
+            metadata <- dplyr::bind_rows(metadata, metadata.aux)
+            
+          } else {
+            
+            rlang::warn(
+              paste0("Series code not found: '", code[i], "'."),
+              class = "ipeadata_series_not_found"
+            )
+            
+          }
+          
+          # Progress Bar
+          if (!quiet && n >= 2 && (i %% update.step == 0L || i == n)) {
+            cli::cli_progress_update(id = pb, set = i)
+          }
+          
+        }
+        
+      }, error = function(e) {
+        rlang::abort(
+          "Failed to retrieve data from the Ipeadata API.",
+          class = "ipeadata_api_error",
+          parent = e
+        )
+      })
+      
+    }
+
   } else {
     
     rlang::abort(
@@ -129,7 +198,7 @@ metadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
   }
   
   # Setting labels in selected language
-  if (nrow(metadata) != 0) {
+  if (nrow(metadata) > 0) {
     
     ## Starting: Transform in date >
     ##           Transform in factor >

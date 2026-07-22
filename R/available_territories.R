@@ -21,6 +21,7 @@ available_territories <- function(language = c("en", "br"), label = TRUE) {
   
   # URL for territories
   url <- "https://www.ipeadata.gov.br/api/odata4/Territorios/"
+  urla <- "http://www.ipeadata.gov.br/api/odata4/Territorios/"
   
   # Output NULL
   territories <- NULL
@@ -28,9 +29,11 @@ available_territories <- function(language = c("en", "br"), label = TRUE) {
   # Test internet connection
   if (curl::has_internet()) {
     
+    ## Main URL 
     Sys.sleep(.01)
     tryCatch({
       
+      res <- curl::curl_fetch_memory(url)
       ## Starting: Extract from JSON >
       ##           Transform to tbl >
       ##           Select variables >
@@ -38,19 +41,49 @@ available_territories <- function(language = c("en", "br"), label = TRUE) {
       ##           Sort by uname >
       ##           Rename variables >
       ##           Add subtitles
-      territories <- jsonlite::fromJSON(url, flatten = TRUE)[[2]] |>
+      territories <- jsonlite::fromJSON(
+        rawToChar(res$content),
+        flatten = TRUE
+      )[["value"]] |>
         dplyr::as_tibble() |>
         dplyr::select("NIVNOME", "TERCODIGO", "TERNOME", "TERAREA") |>
         dplyr::filter(!is.na(.data$TERAREA)) |>
         dplyr::arrange(.data$TERCODIGO)
       
-    }, error = function(e) {
-      rlang::abort(
-        "Failed to retrieve data from the Ipeadata API.",
-        class = "ipeadata_api_error",
-        parent = e
-      )
-    })
+    }, error = function(e) {NULL})
+    
+    ## Alternative URL 
+    if (is.null(territories)) {
+      
+      Sys.sleep(.01)
+      tryCatch({
+        
+        res <- curl::curl_fetch_memory(urla)
+        ## Starting: Extract from JSON >
+        ##           Transform to tbl >
+        ##           Select variables >
+        ##           Remove NA >
+        ##           Sort by uname >
+        ##           Rename variables >
+        ##           Add subtitles
+        territories <- jsonlite::fromJSON(
+          rawToChar(res$content),
+          flatten = TRUE
+        )[["value"]] |>
+          dplyr::as_tibble() |>
+          dplyr::select("NIVNOME", "TERCODIGO", "TERNOME", "TERAREA") |>
+          dplyr::filter(!is.na(.data$TERAREA)) |>
+          dplyr::arrange(.data$TERCODIGO)
+        
+      }, error = function(e) {
+        rlang::abort(
+          "Failed to retrieve data from the Ipeadata API.",
+          class = "ipeadata_api_error",
+          parent = e
+        )
+      })
+      
+    }
     
     # Setting labels in selected language
     if (!is.null(territories)) {

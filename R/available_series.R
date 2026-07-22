@@ -22,6 +22,7 @@ available_series <- function(language = c("en", "br"), label = TRUE) {
   
   # URL for metadata
   url <- "https://www.ipeadata.gov.br/api/odata4/Metadados/"
+  urla <- "http://www.ipeadata.gov.br/api/odata4/Metadados/"
   
   # Output NULL
   series <- NULL
@@ -29,16 +30,21 @@ available_series <- function(language = c("en", "br"), label = TRUE) {
   # Test internet connection
   if (curl::has_internet()) {
     
+    ## Main URL 
     Sys.sleep(.01)
     tryCatch({
       
+      res <- curl::curl_fetch_memory(url)
       ## Starting: Extract from JSON >
       ##           Transform to tbl >
       ##           Select variables >
       ##           Sort by source, freq and code >
       ##           Transform in factor >
       ##           Transform in date >
-      series <- jsonlite::fromJSON(url, flatten = TRUE)[[2]] |>
+      series <- jsonlite::fromJSON(
+        rawToChar(res$content),
+        flatten = TRUE
+      )[["value"]] |>
         dplyr::as_tibble() |>
         dplyr::select(
           "SERCODIGO", "SERNOME", "BASNOME", "FNTSIGLA", "PERNOME",
@@ -56,14 +62,52 @@ available_series <- function(language = c("en", "br"), label = TRUE) {
           )
         )
       
-    }, error = function(e) {
-      rlang::abort(
-        "Failed to retrieve data from the Ipeadata API.",
-        class = "ipeadata_api_error",
-        parent = e
-      )
-    })
+    }, error = function(e) {NULL})
     
+    ## Alternative URL 
+    if (is.null(series)) {
+      
+      Sys.sleep(.01)
+      tryCatch({
+        
+        res <- curl::curl_fetch_memory(urla)
+        ## Starting: Extract from JSON >
+        ##           Transform to tbl >
+        ##           Select variables >
+        ##           Sort by source, freq and code >
+        ##           Transform in factor >
+        ##           Transform in date >
+        series <- jsonlite::fromJSON(
+          rawToChar(res$content),
+          flatten = TRUE
+        )[["value"]] |>
+          dplyr::as_tibble() |>
+          dplyr::select(
+            "SERCODIGO", "SERNOME", "BASNOME", "FNTSIGLA", "PERNOME",
+            "SERATUALIZACAO", "SERSTATUS"
+          ) |>
+          dplyr::arrange(
+            .data$BASNOME, .data$FNTSIGLA, .data$PERNOME, .data$SERCODIGO
+          ) |>
+          dplyr::mutate(
+            FNTSIGLA = as.factor(.data$FNTSIGLA),
+            SERATUALIZACAO = lubridate::as_date(.data$SERATUALIZACAO),
+            SERSTATUS = as.character(.data$SERSTATUS),
+            SERSTATUS = dplyr::if_else(
+              is.na(.data$SERSTATUS), "", .data$SERSTATUS
+            )
+          )
+        
+      }, error = function(e) {
+        rlang::abort(
+          "Failed to retrieve data from the Ipeadata API.",
+          class = "ipeadata_api_error",
+          parent = e
+        )
+      })
+      
+    }
+
     # Setting labels in selected language
     if (!is.null(series)) {
       

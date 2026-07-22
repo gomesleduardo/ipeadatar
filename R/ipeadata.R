@@ -15,14 +15,6 @@
 #' @return A data frame containing the Ipeadata code, date, value,
 #'   territorial unit name, and territorial code of the requested series.
 #'
-#' @examples
-#' \donttest{
-#' data <- ipeadata(
-#'   code = "PRECOS12_IPCA12",
-#'   language = "en"
-#' )
-#' }
-#'
 #' @note Ipeadata codes may be obtained using [available_series()].
 #'
 #' @seealso [available_series()], [available_territories()]
@@ -31,8 +23,13 @@
 #'   \url{https://www.ipeadata.gov.br/}
 #'
 #' @export
+#' 
+#' @examples
+#' \donttest{data <- ipeadata(code = "PRECOS12_IPCA12")}
 
-ipeadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE) {
+ipeadata <- function(
+    code, language = c("en", "br"), label = TRUE, quiet = FALSE
+) {
   
   # Check language arg
   language <- match.arg(language)
@@ -44,7 +41,10 @@ ipeadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
   n <- length(code)
   pb <- NULL
   if (!quiet && n >= 2) {
-    cli::cli_alert_info("Requesting Ipeadata API {.url https://www.ipeadata.gov.br/api/}")
+    
+    cli::cli_alert_info(
+      "Requesting Ipeadata API {.url https://www.ipeadata.gov.br/api/}"
+    )
     
     pb <- cli::cli_progress_bar("Processing", total = n)
     
@@ -54,6 +54,7 @@ ipeadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
   # Test internet connection
   if (curl::has_internet()) {
     
+    ## Main URL 
     Sys.sleep(.01)
     tryCatch({
       
@@ -71,7 +72,11 @@ ipeadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
         
         # Extract from JSON
         Sys.sleep(.01)
-        values.aux <- jsonlite::fromJSON(url, flatten = TRUE)[[2]] |> 
+        res <- curl::curl_fetch_memory(url)
+        values.aux <- jsonlite::fromJSON(
+          rawToChar(res$content),
+          flatten = TRUE
+        )[["value"]] |>
           dplyr::as_tibble()
         
         if (nrow(values.aux) > 0) {
@@ -104,20 +109,89 @@ ipeadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
         }
         
         # Progress Bar
-        if (!quiet && n >= 2 && (i %% update.step == 0L || i == n)) {
-          cli::cli_progress_update(id = pb, set = i)
+        if (nrow(values) > 0) { 
+          if (!quiet && n >= 2 && (i %% update.step == 0L || i == n)) {
+            cli::cli_progress_update(id = pb, set = i)
+          }
         }
-        
+
       }
       
-    }, error = function(e) {
-      rlang::abort(
-        "Failed to retrieve data from the Ipeadata API.",
-        class = "ipeadata_api_error",
-        parent = e
-      )
-    })
+    }, error = function(e) {NULL})
     
+    ## Alternative URL 
+    if (nrow(values) == 0) {
+      
+      Sys.sleep(.01)
+      tryCatch({
+        
+        # Retrieve series data for each code
+        for (i in seq_along(code)) {
+          
+          # Check
+          code0 <- gsub(" ", "_", toupper(code[i]))
+          
+          # URL for series data
+          url <- paste0(
+            "http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='", 
+            code0, "')"
+          )
+          
+          # Extract from JSON
+          Sys.sleep(.01)
+          res <- curl::curl_fetch_memory(url)
+          values.aux <- jsonlite::fromJSON(
+            rawToChar(res$content),
+            flatten = TRUE
+          )[["value"]] |>
+            dplyr::as_tibble()
+          
+          if (nrow(values.aux) > 0) {
+            
+            # Sorting by tcode and date
+            values.aux <- values.aux |>
+              dplyr::mutate(
+                TERCODIGO = dplyr::if_else(
+                  .data$TERCODIGO == "",
+                  "0",
+                  .data$TERCODIGO
+                ),
+                TERCODIGO = as.integer(.data$TERCODIGO),
+                NIVNOME = dplyr::if_else(
+                  .data$NIVNOME == "",
+                  "Brasil",
+                  .data$NIVNOME
+                ),
+                VALDATA = lubridate::as_date(.data$VALDATA)
+              ) |>
+              dplyr::arrange(.data$TERCODIGO, .data$VALDATA)
+            
+            # Concatenate rows
+            values <- dplyr::bind_rows(values, values.aux)
+            
+          } else {
+            
+            cli::cli_alert_warning("Code '{code[i]}' not found.")
+            
+          }
+          
+          # Progress Bar
+          if (!quiet && n >= 2 && (i %% update.step == 0L || i == n)) {
+            cli::cli_progress_update(id = pb, set = i)
+          }
+          
+        }
+        
+      }, error = function(e) {
+        rlang::abort(
+          "Failed to retrieve data from the Ipeadata API.",
+          class = "ipeadata_api_error",
+          parent = e
+        )
+      })
+      
+    }
+
   } else {
     rlang::abort(
       "Internet connection is unavailable.",
@@ -131,7 +205,7 @@ ipeadata <- function(code, language = c("en", "br"), label = TRUE, quiet = FALSE
   }
   
   # Setting labels in selected language
-  if (nrow(values) != 0) {
+  if (nrow(values) > 0) {
     
     ## Starting: Remove NA >
     ##           Rename variables >
