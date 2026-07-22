@@ -1,3 +1,29 @@
+# ipeadatar 0.2.1
+
+## Bug fixes
+
+Fixed SSL-related connection issues in:
+
+- `ipeadata()`
+- `metadata()`
+- `available_series()`
+- `available_subjects()`
+- `available_territories()`
+
+Data retrieval now uses explicit HTTP requests via `curl::curl_fetch_memory()` before JSON parsing, improving compatibility on systems where direct URL access could fail with SSL errors.
+
+## Improvements
+
+- Added automatic fallback between HTTPS and HTTP API endpoints, increasing robustness when the primary endpoint is temporarily unavailable.
+- Improved handling of API responses.
+- Minor maintenance and code quality improvements.
+
+## Documentation
+
+- Updated package vignettes.
+- Corrected vignette paths and examples.
+- Improved reproducibility of vignette code.
+
 # ipeadatar 0.2.0
 
 ## Breaking changes
