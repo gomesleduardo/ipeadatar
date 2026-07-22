@@ -1,7 +1,7 @@
 ---
 title: "ipeadatar"
 subtitle: "API Wrapper for Ipeadata"
-author: "Institute for Applied Economic Research (Ipea)"
+author: "Instituto de Pesquisa Econômica Aplicada (Ipea)"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{ipeadatar}
@@ -40,7 +40,7 @@ install.packages("ipeadatar")
 Or the development version from GitHub:
 
 ```{r}
-pak::pak("gomesleduardo/ipeadatar")
+pak::pak("ipea/ipeadatar")
 ```
 
 Then load the package:
